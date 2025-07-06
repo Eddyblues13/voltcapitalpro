@@ -8,7 +8,8 @@ class Trader extends Model
 {
 
     protected $fillable = [
-        'picture',
+        'picture_url',
+        'picture_public_id',
         'is_verified',
         'verified_badge',
         'name',

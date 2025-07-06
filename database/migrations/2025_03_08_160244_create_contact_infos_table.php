@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('country')->nullable();
-            $table->string('bill')->nullable();
+            $table->string('utility_bill_url')->nullable();
+            $table->string('utility_bill_public_id')->nullable();
             $table->timestamps();
         });
     }

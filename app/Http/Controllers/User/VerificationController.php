@@ -11,9 +11,20 @@ use App\Models\IdentityVerification;
 use App\Models\User\ContactInfo;
 use App\Models\User\ReferralBalance;
 use Illuminate\Support\Facades\Auth;
+use Cloudinary\Cloudinary;
+use Cloudinary\Api\Upload\UploadApi;
 
 class VerificationController extends Controller
 {
+    protected $cloudinary;
+    protected $uploadApi;
+
+    public function __construct()
+    {
+        $this->cloudinary = new Cloudinary();
+        $this->uploadApi = $this->cloudinary->uploadApi();
+    }
+
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -24,17 +35,12 @@ class VerificationController extends Controller
         $data['tradingBalance'] = TradingBalance::where('user_id', $user->id)->sum('amount') ?? 0;
         $data['referralBalance'] = ReferralBalance::where('user_id', $user->id)->sum('amount') ?? 0;
 
-
         $data['email_verification'] = $user->email_verification;
         $data['id_verification'] = $user->id_verification;
         $data['address_verification'] = $user->address_verification;
 
-
-
-
         return view('user.verification.index', $data);
     }
-
 
     public function identity(Request $request)
     {
@@ -46,17 +52,12 @@ class VerificationController extends Controller
         $data['tradingBalance'] = TradingBalance::where('user_id', $user->id)->sum('amount') ?? 0;
         $data['referralBalance'] = ReferralBalance::where('user_id', $user->id)->sum('amount') ?? 0;
 
-
         $data['email_verification'] = $user->email_verification;
         $data['id_verification'] = $user->id_verification;
         $data['address_verification'] = $user->address_verification;
 
-
-
-
         return view('user.verification.id_verification', $data);
     }
-
 
     public function identityVerify(Request $request)
     {
@@ -79,36 +80,64 @@ class VerificationController extends Controller
             ], 422);
         }
 
-        // Handle front photo upload
-        if ($request->hasFile('front_photo')) {
-            $frontPhoto = $request->file('front_photo');
-            $frontFilename = 'front_' . time() . '.' . $frontPhoto->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/identity_verifications/');
-            $frontPhoto->move($destinationPath, $frontFilename);
-            $frontPhotoPath = 'uploads/identity_verifications/' . $frontFilename;
+        try {
+            // Handle front photo upload to Cloudinary
+            $frontPhotoUrl = null;
+            $frontPhotoPublicId = null;
+            if ($request->hasFile('front_photo')) {
+                $uploadResult = $this->uploadApi->upload(
+                    $request->file('front_photo')->getRealPath(),
+                    [
+                        'folder' => 'identity_verifications',
+                        'transformation' => [
+                            'width' => 800,
+                            'height' => 600,
+                            'crop' => 'limit'
+                        ]
+                    ]
+                );
+                $frontPhotoUrl = $uploadResult['secure_url'];
+                $frontPhotoPublicId = $uploadResult['public_id'];
+            }
+
+            // Handle back photo upload to Cloudinary
+            $backPhotoUrl = null;
+            $backPhotoPublicId = null;
+            if ($request->hasFile('back_photo')) {
+                $uploadResult = $this->uploadApi->upload(
+                    $request->file('back_photo')->getRealPath(),
+                    [
+                        'folder' => 'identity_verifications',
+                        'transformation' => [
+                            'width' => 800,
+                            'height' => 600,
+                            'crop' => 'limit'
+                        ]
+                    ]
+                );
+                $backPhotoUrl = $uploadResult['secure_url'];
+                $backPhotoPublicId = $uploadResult['public_id'];
+            }
+
+            // Create the verification record
+            $verification = IdentityVerification::create([
+                'user_id' => $user->id,
+                'front_photo_url' => $frontPhotoUrl,
+                'front_photo_public_id' => $frontPhotoPublicId,
+                'back_photo_url' => $backPhotoUrl,
+                'back_photo_public_id' => $backPhotoPublicId,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Identity verification submitted successfully. It will be reviewed shortly.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to upload verification documents. Please try again.'
+            ], 500);
         }
-
-        // Handle back photo upload
-        if ($request->hasFile('back_photo')) {
-            $backPhoto = $request->file('back_photo');
-            $backFilename = 'back_' . time() . '.' . $backPhoto->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/identity_verifications/');
-            $backPhoto->move($destinationPath, $backFilename);
-            $backPhotoPath = 'uploads/identity_verifications/' . $backFilename;
-        }
-
-        // Create the verification record
-        $verification = IdentityVerification::create([
-            'user_id' => $user->id,
-            'front_photo_path' => $frontPhotoPath,
-            'back_photo_path' => $backPhotoPath,
-
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Identity verification submitted successfully. It will be reviewed shortly.'
-        ]);
     }
 
     public function address(Request $request)
@@ -121,13 +150,9 @@ class VerificationController extends Controller
         $data['tradingBalance'] = TradingBalance::where('user_id', $user->id)->sum('amount') ?? 0;
         $data['referralBalance'] = ReferralBalance::where('user_id', $user->id)->sum('amount') ?? 0;
 
-
         $data['email_verification'] = $user->email_verification;
         $data['id_verification'] = $user->id_verification;
         $data['address_verification'] = $user->address_verification;
-
-
-
 
         return view('user.verification.address_verification', $data);
     }
@@ -136,7 +161,6 @@ class VerificationController extends Controller
     {
         $request->validate([
             'utility_bill' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-
         ]);
 
         $user = Auth::user();
@@ -151,43 +175,54 @@ class VerificationController extends Controller
             ], 422);
         }
 
-        // Handle utility bill upload
-        if ($request->hasFile('utility_bill')) {
-            $utilityBill = $request->file('utility_bill');
-            $utilityFilename = 'utility_bill_' . time() . '.' . $utilityBill->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/address_verifications/');
-
-            // Create directory if it doesn't exist
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
+        try {
+            // Handle utility bill upload to Cloudinary
+            $utilityBillUrl = null;
+            $utilityBillPublicId = null;
+            if ($request->hasFile('utility_bill')) {
+                $uploadResult = $this->uploadApi->upload(
+                    $request->file('utility_bill')->getRealPath(),
+                    [
+                        'folder' => 'address_verifications',
+                        'transformation' => [
+                            'width' => 800,
+                            'height' => 600,
+                            'crop' => 'limit'
+                        ]
+                    ]
+                );
+                $utilityBillUrl = $uploadResult['secure_url'];
+                $utilityBillPublicId = $uploadResult['public_id'];
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Utility bill file is required.'
+                ], 422);
             }
 
-            $utilityBill->move($destinationPath, $utilityFilename);
-            $utilityBillPath = 'uploads/address_verifications/' . $utilityFilename;
-        } else {
+            // Create the verification record
+            $verification = ContactInfo::create([
+                'user_id' => $user->id,
+                'mobile_number' => $request->mobile_number ?? null,
+                'street_address' => $request->street_address ?? null,
+                'zip_code' => $request->zip_code ?? null,
+                'city' => $user->city ?? null,
+                'state' => $user->state ?? null,
+                'country' => $user->country ?? null,
+                'utility_bill_url' => $utilityBillUrl,
+                'utility_bill_public_id' => $utilityBillPublicId,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Address verification submitted successfully. It will be reviewed shortly.',
+                'data' => $verification
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Utility bill file is required.'
-            ], 422);
+                'message' => 'Failed to upload address verification document. Please try again.'
+            ], 500);
         }
-
-        // Create the verification record
-        $verification = ContactInfo::create([
-            'user_id' => $user->id,
-            'mobile_number' => $request->mobile_number ?? null, // Assuming this might be optional
-            'street_address' => $request->street_address ?? null,
-            'zip_code' => $request->zip_code ?? null,
-            'city' => $user->city ?? null,
-            'state' => $user->state ?? null,
-            'country' =>  $user->country ?? null, // Fallback to user's country
-            'bill' => $utilityBillPath,
-
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Address verification submitted successfully. It will be reviewed shortly.',
-            'data' => $verification
-        ]);
     }
 }

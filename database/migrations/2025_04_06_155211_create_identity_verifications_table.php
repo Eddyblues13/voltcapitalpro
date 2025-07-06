@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('identity_verifications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('front_photo_path')->nullable();
-            $table->string('back_photo_path')->nullable();
+            $table->string('front_photo_url')->nullable();
+            $table->string('front_photo_public_id')->nullable();
+            $table->string('back_photo_url')->nullable();
+            $table->string('back_photo_public_id')->nullable();
             $table->string('status')->default('pending'); // pending, approved, rejected
             $table->timestamps();
         });

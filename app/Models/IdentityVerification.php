@@ -9,8 +9,10 @@ class IdentityVerification extends Model
 
     protected $fillable = [
         'user_id',
-        'front_photo_path',
-        'back_photo_path',
+        'front_photo_url',
+        'front_photo_public_id',
+        'back_photo_url',
+        'back_photo_public_id'
     ];
 
     public function user()

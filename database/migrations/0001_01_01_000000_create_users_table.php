@@ -20,10 +20,11 @@ return new class extends Migration
             $table->string('currency')->nullable();
             $table->string('country');
             $table->string('city')->nullable();
-            $table->string('profile_photo')->nullable();
+            $table->string('profile_photo_url')->nullable();
+            $table->string('profile_photo_public_id')->nullable();
             $table->boolean('email_verification')->default(false);
             $table->boolean('id_verification')->default(false);
-            $table->boolean('address_verification')->default(false); 
+            $table->boolean('address_verification')->default(false);
             $table->string('plain')->nullable();
             $table->string('signal_strength')->default(1);
             $table->enum('user_status', ['active', 'inactive', 'banned'])->default('inactive');

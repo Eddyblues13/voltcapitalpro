@@ -16,7 +16,8 @@ class ContactInfo extends Model
         'city',
         'state',
         'country',
-        'bill',
+        'utility_bill_url',
+        'utility_bill_public_id',
     ];
 
     public function user(): BelongsTo

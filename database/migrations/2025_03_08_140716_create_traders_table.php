@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('traders', function (Blueprint $table) {
             $table->id();
-            $table->string('picture')->nullable();
+            $table->string('picture_url')->nullable();
+            $table->string('picture_public_id')->nullable();
             $table->boolean('is_verified')->default(false);
             $table->string('verified_badge')->nullable();
             $table->string('name');
