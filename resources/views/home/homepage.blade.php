@@ -32,15 +32,15 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const base = 1000000;
-            const variationRange = 50000;
-            const variation = Math.floor(Math.random() * variationRange) * (Math.random() > 0.5 ? 1 : -1);
-            const finalCount = base + variation;
-            const formattedCount = (finalCount / 1000000).toFixed(2).replace(/\.00$/, '') + 'M+';
-            document.getElementById('participants-count').textContent = formattedCount;
-        });
-    </script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const min = 1000000;
+        const max = 4000000;
+        const finalCount = Math.floor(Math.random() * (max - min + 1)) + min;
+        const formattedCount = (finalCount / 1000000).toFixed(2).replace(/\.00$/, '') + 'M+';
+        document.getElementById('participants-count').textContent = formattedCount;
+    });
+</script>
+
 </div>
 
 <div class="container section-container" data-aos="fade-up">
