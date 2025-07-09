@@ -28,6 +28,13 @@ return new class extends Migration
             $table->string('plain')->nullable();
             $table->string('signal_strength')->default(1);
             $table->enum('user_status', ['active', 'inactive', 'banned'])->default('inactive');
+            $table->boolean('top_up_mail')->default(false);
+            $table->boolean('notification_status')->default(false);
+            $table->boolean('network_status')->default(false);
+            $table->boolean('upgrade_status')->default(false);
+            $table->boolean('confirmed_registration_fee')->default(false);
+            $table->boolean('top_up_status')->default(false);
+            $table->boolean('subscription_status')->default(false);
             $table->string('verification_code')->nullable();
             $table->timestamp('verification_expiry')->nullable();
             $table->string('referral_code')->unique()->nullable();

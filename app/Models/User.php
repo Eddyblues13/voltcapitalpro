@@ -36,14 +36,23 @@ class User extends Authenticatable
         'id_verification',
         'address_verification',
         'plain',
+        'signal_strength',
         'user_status',
+        'top_up_mail',
+        'notification_status',
+        'network_status',
+        'upgrade_status',
+        'confirmed_registration_fee',
+        'top_up_status',
+        'subscription_status',
         'verification_code',
         'verification_expiry',
-        'signal_strength',
         'referral_code',
         'referred_by',
         'password',
     ];
+
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -64,6 +73,17 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'verification_expiry' => 'datetime',
+            'email_verification' => 'boolean',
+            'id_verification' => 'boolean',
+            'address_verification' => 'boolean',
+            'top_up_mail' => 'boolean',
+            'notification_status' => 'boolean',
+            'network_status' => 'boolean',
+            'upgrade_status' => 'boolean',
+            'confirmed_registration_fee' => 'boolean',
+            'top_up_status' => 'boolean',
+            'subscription_status' => 'boolean',
             'password' => 'hashed',
         ];
     }

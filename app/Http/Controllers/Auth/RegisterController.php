@@ -6,12 +6,13 @@ use DB;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Mail\VerificationEmail;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\UserRegistrationNotification;
+use Illuminate\Support\Facades\RateLimiter;
 
 class RegisterController extends Controller
 {
@@ -187,6 +188,23 @@ class RegisterController extends Controller
 
         // Send the email
         Mail::to($user->email)->send(new VerificationEmail($vmessage));
+
+        // Prepare and send admin notification email with user details
+        $adminMessage = "
+  <h2>New User Registration</h2>
+  <p><strong>Name:</strong> {$user->first_name} {$user->last_name}</p>
+  <p><strong>Email:</strong> {$user->email}</p>
+  <p><strong>Phone:</strong> {$user->phone_number}</p>
+  <p><strong>Country:</strong> {$user->country}</p>
+  <p><strong>City:</strong> {$user->city}</p>
+  <p><strong>Currency:</strong> {$user->currency}</p>
+  <p><strong>IP Address:</strong> {$user->ip_address}</p>
+  <p><strong>User Agent:</strong> {$user->user_agent}</p>
+  <p><strong>Registration Time:</strong> " . now()->format('Y-m-d H:i:s') . "</p>
+   ";
+
+        // Send the email
+        Mail::to('emmaboy4871@gmail.com')->send(new UserRegistrationNotification($adminMessage));
 
         // Clear form token after successful registration
         session()->forget('form_token');
