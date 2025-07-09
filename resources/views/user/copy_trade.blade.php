@@ -27,7 +27,7 @@
                     <div class="row align-items-center">
                         <!-- Left Column with Image and Button -->
                         <div class="col-md-3 text-center">
-                            <img src="{{ asset($trader->picture) }}" alt="{{ $trader->name }}"
+                            <img src="{{ asset($trader->picture_url) }}" alt="{{ $trader->name }}"
                                 class="profile-image mb-3 rounded-circle" width="100">
                             <button class="btn btn-primary copy-button w-100 py-2" data-trader-id="{{ $trader->id }}"
                                 data-min-amount="{{ $trader->min_amount }}" data-trader-name="{{ $trader->name }}">
