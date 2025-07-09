@@ -115,44 +115,222 @@
                                 </div>
                                 <div class="col-md-3">
                                     <h5>Trades</h5>
-
                                     <a class="btn btn-sm btn-primary d-inline"
                                         href="{{ route('admin.users.trading-histories.index', ['user' => $user->id]) }}">Add
                                         Trade</a>
-
-
                                 </div>
                                 <div class="col-md-3">
                                     <h5>Manage User</h5>
-
                                     <a class="btn btn-sm btn-primary d-inline"
-                                        href="{{ route('admin.users.edit', ['user' => $user->id]) }}">Edit
-                                        User</a>
-
-
+                                        href="{{ route('admin.users.edit', ['user' => $user->id]) }}">Edit User</a>
                                 </div>
                                 <div class="col-md-3">
                                     <h5>ID Verification</h5>
-
                                     <a class="btn btn-sm btn-primary d-inline"
                                         href="{{ route('admin.users.identity-verifications.index', ['user' => $user->id]) }}">View</a>
-
-
                                 </div>
                                 <div class="col-md-3">
                                     <h5>Address Verification</h5>
-
                                     <a class="btn btn-sm btn-primary d-inline"
                                         href="{{ route('admin.users.address-verifications.index', ['user' => $user->id]) }}">View</a>
-
-
                                 </div>
-
                                 <div class="col-md-3">
                                     <h5>Signal Strength</h5>
                                     <span class="badge badge-success">{{$user->signal_strength}}%</span>
                                 </div>
+
+                                <!-- New status toggles -->
+                                <div class="col-md-3">
+                                    <h5>Top Up Mail</h5>
+                                    <label class="switch">
+                                        <input type="checkbox" id="top_up_mail" {{ $user->top_up_mail ? 'checked' : ''
+                                        }} onchange="updateStatus('top_up_mail', this.checked)">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span id="top_up_mail_status"
+                                        class="badge {{ $user->top_up_mail ? 'badge-success' : 'badge-danger' }}">
+                                        {{ $user->top_up_mail ? 'ON' : 'OFF' }}
+                                    </span>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <h5>Notification Status</h5>
+                                    <label class="switch">
+                                        <input type="checkbox" id="notification_status" {{ $user->notification_status ?
+                                        'checked' : '' }} onchange="updateStatus('notification_status', this.checked)">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span id="notification_status_status"
+                                        class="badge {{ $user->notification_status ? 'badge-success' : 'badge-danger' }}">
+                                        {{ $user->notification_status ? 'ON' : 'OFF' }}
+                                    </span>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <h5>Network Status</h5>
+                                    <label class="switch">
+                                        <input type="checkbox" id="network_status" {{ $user->network_status ? 'checked'
+                                        : '' }} onchange="updateStatus('network_status', this.checked)">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span id="network_status_status"
+                                        class="badge {{ $user->network_status ? 'badge-success' : 'badge-danger' }}">
+                                        {{ $user->network_status ? 'ON' : 'OFF' }}
+                                    </span>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <h5>Upgrade Status</h5>
+                                    <label class="switch">
+                                        <input type="checkbox" id="upgrade_status" {{ $user->upgrade_status ? 'checked'
+                                        : '' }} onchange="updateStatus('upgrade_status', this.checked)">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span id="upgrade_status_status"
+                                        class="badge {{ $user->upgrade_status ? 'badge-success' : 'badge-danger' }}">
+                                        {{ $user->upgrade_status ? 'ON' : 'OFF' }}
+                                    </span>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <h5>Confirmed Registration Fee</h5>
+                                    <label class="switch">
+                                        <input type="checkbox" id="confirmed_registration_fee" {{
+                                            $user->confirmed_registration_fee ? 'checked' : '' }}
+                                        onchange="updateStatus('confirmed_registration_fee', this.checked)">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span id="confirmed_registration_fee_status"
+                                        class="badge {{ $user->confirmed_registration_fee ? 'badge-success' : 'badge-danger' }}">
+                                        {{ $user->confirmed_registration_fee ? 'ON' : 'OFF' }}
+                                    </span>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <h5>Top Up Status</h5>
+                                    <label class="switch">
+                                        <input type="checkbox" id="top_up_status" {{ $user->top_up_status ? 'checked' :
+                                        '' }} onchange="updateStatus('top_up_status', this.checked)">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span id="top_up_status_status"
+                                        class="badge {{ $user->top_up_status ? 'badge-success' : 'badge-danger' }}">
+                                        {{ $user->top_up_status ? 'ON' : 'OFF' }}
+                                    </span>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <h5>Subscription Status</h5>
+                                    <label class="switch">
+                                        <input type="checkbox" id="subscription_status" {{ $user->subscription_status ?
+                                        'checked' : '' }} onchange="updateStatus('subscription_status', this.checked)">
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span id="subscription_status_status"
+                                        class="badge {{ $user->subscription_status ? 'badge-success' : 'badge-danger' }}">
+                                        {{ $user->subscription_status ? 'ON' : 'OFF' }}
+                                    </span>
+                                </div>
                             </div>
+
+                            <style>
+                                /* Switch styling */
+                                .switch {
+                                    position: relative;
+                                    display: inline-block;
+                                    width: 60px;
+                                    height: 34px;
+                                }
+
+                                .switch input {
+                                    opacity: 0;
+                                    width: 0;
+                                    height: 0;
+                                }
+
+                                .slider {
+                                    position: absolute;
+                                    cursor: pointer;
+                                    top: 0;
+                                    left: 0;
+                                    right: 0;
+                                    bottom: 0;
+                                    background-color: #ccc;
+                                    -webkit-transition: .4s;
+                                    transition: .4s;
+                                }
+
+                                .slider:before {
+                                    position: absolute;
+                                    content: "";
+                                    height: 26px;
+                                    width: 26px;
+                                    left: 4px;
+                                    bottom: 4px;
+                                    background-color: white;
+                                    -webkit-transition: .4s;
+                                    transition: .4s;
+                                }
+
+                                input:checked+.slider {
+                                    background-color: #2196F3;
+                                }
+
+                                input:focus+.slider {
+                                    box-shadow: 0 0 1px #2196F3;
+                                }
+
+                                input:checked+.slider:before {
+                                    -webkit-transform: translateX(26px);
+                                    -ms-transform: translateX(26px);
+                                    transform: translateX(26px);
+                                }
+
+                                /* Rounded sliders */
+                                .slider.round {
+                                    border-radius: 34px;
+                                }
+
+                                .slider.round:before {
+                                    border-radius: 50%;
+                                }
+                            </style>
+
+                            <script>
+                                function updateStatus(field, value) {
+    fetch("{{ route('admin.update.user.status') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        },
+        body: JSON.stringify({
+            user_id: "{{ $user->id }}",
+            field: field,
+            value: value ? 1 : 0
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const statusElement = document.getElementById(`${field}_status`);
+            statusElement.textContent = value ? 'ON' : 'OFF';
+            statusElement.className = `badge ${value ? 'badge-success' : 'badge-danger'}`;
+            toastr.success('Status updated successfully');
+        } else {
+            toastr.error('Error updating status');
+            // Revert the switch if there was an error
+            document.getElementById(field).checked = !value;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        toastr.error('Error updating status');
+        // Revert the switch if there was an error
+        document.getElementById(field).checked = !value;
+    });
+}
+                            </script>
                             <div class="mt-3 row text-light">
                                 <div class="col-md-12">
                                     <h5>USER INFORMATION</h5>

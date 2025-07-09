@@ -396,6 +396,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\ManageUserController::class, 'edit'])->name('admin.users.edit');
         Route::put('/users/{user}', [App\Http\Controllers\Admin\ManageUserController::class, 'update'])->name('admin.users.update');
         Route::delete('/users/{user}', [App\Http\Controllers\Admin\ManageUserController::class, 'destroy'])->name('admin.users.destroy');
+        Route::post('/update-user-status', [App\Http\Controllers\Admin\ManageUserController::class, 'updateStatus'])->name('admin.update.user.status');
 
 
 

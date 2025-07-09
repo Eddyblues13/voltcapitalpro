@@ -1,11 +1,152 @@
 @include('user.layouts.header')
 
+<!-- Status Modals -->
+@if(Auth::user()->top_up_mail)
+<div class="modal fade" id="topUpMailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Top Up Notification</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your account has been credited successfully. Check your balance to confirm.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+@if(Auth::user()->notification_status)
+<div class="modal fade" id="notificationStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">New Notification</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>You have new notifications waiting for you in your inbox.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">View Notifications</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+@if(Auth::user()->network_status)
+<div class="modal fade" id="networkStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Network Update</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Our network is currently undergoing maintenance for performance improvements.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+@if(Auth::user()->upgrade_status)
+<div class="modal fade" id="upgradeStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Account Upgrade Available</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>You're eligible for an account upgrade with additional benefits!</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Upgrade Now</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+@if(Auth::user()->confirmed_registration_fee)
+<div class="modal fade" id="registrationFeeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Registration Fee Confirmed</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your registration fee payment has been confirmed. Full account access granted.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+@if(Auth::user()->top_up_status)
+<div class="modal fade" id="topUpStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Top Up Required</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your account balance is low. Please top up to continue trading without restrictions.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Top Up Now</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+@if(Auth::user()->subscription_status)
+<div class="modal fade" id="subscriptionStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Subscription Update</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your premium subscription is active with all benefits unlocked.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Main Content -->
 <div class="main-content">
     <div class="row g-4">
         <!-- Left Section -->
         <div class="col-md-4 col-12">
-            <div> 
+            <div>
                 <div class="dashboard-balance-card">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -158,7 +299,6 @@
                     @endforelse
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -198,17 +338,38 @@
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.querySelectorAll('.toggle-button').forEach(button => {
-        button.addEventListener('click', function () {
-            document.querySelectorAll('.toggle-button').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
+    // Show modals based on status flags
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize all Bootstrap modals first
+        const modals = [
+            @if(Auth::user()->top_up_mail) new bootstrap.Modal(document.getElementById('topUpMailModal')), @endif
+            @if(Auth::user()->notification_status) new bootstrap.Modal(document.getElementById('notificationStatusModal')), @endif
+            @if(Auth::user()->network_status) new bootstrap.Modal(document.getElementById('networkStatusModal')), @endif
+            @if(Auth::user()->upgrade_status) new bootstrap.Modal(document.getElementById('upgradeStatusModal')), @endif
+            @if(Auth::user()->confirmed_registration_fee) new bootstrap.Modal(document.getElementById('registrationFeeModal')), @endif
+            @if(Auth::user()->top_up_status) new bootstrap.Modal(document.getElementById('topUpStatusModal')), @endif
+            @if(Auth::user()->subscription_status) new bootstrap.Modal(document.getElementById('subscriptionStatusModal')) @endif
+        ].filter(Boolean);
 
-            const type = this.getAttribute('data-type');
-            document.getElementById('opentrades').style.display = type === 'active' ? 'block' : 'none';
-            document.getElementById('closetrades').style.display = type === 'closed' ? 'block' : 'none';
+        // Show modals one after another with a delay
+        modals.forEach((modal, index) => {
+            setTimeout(() => {
+                modal.show();
+            }, index * 300); // 300ms delay between modals
+        });
+
+        // Your existing toggle button code
+        document.querySelectorAll('.toggle-button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.toggle-button').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                const type = this.getAttribute('data-type');
+                document.getElementById('opentrades').style.display = type === 'active' ? 'block' : 'none';
+                document.getElementById('closetrades').style.display = type === 'closed' ? 'block' : 'none';
+            });
         });
     });
 </script>
-
 
 @include('user.layouts.footer')

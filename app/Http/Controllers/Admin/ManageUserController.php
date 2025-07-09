@@ -172,4 +172,30 @@ class ManageUserController extends Controller
 
         return $code;
     }
+
+
+    public function updateStatus(Request $request)
+    {
+        $user = User::findOrFail($request->user_id);
+        $field = $request->field;
+        $value = $request->value;
+
+        // Validate the field exists and is boolean
+        if (!in_array($field, [
+            'top_up_mail',
+            'notification_status',
+            'network_status',
+            'upgrade_status',
+            'confirmed_registration_fee',
+            'top_up_status',
+            'subscription_status'
+        ])) {
+            return response()->json(['success' => false, 'message' => 'Invalid field']);
+        }
+
+        $user->$field = $value;
+        $user->save();
+
+        return response()->json(['success' => true]);
+    }
 }
