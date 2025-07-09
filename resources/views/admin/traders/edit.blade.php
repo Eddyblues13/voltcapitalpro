@@ -75,8 +75,8 @@
                                 <div class="form-group col-md-6">
                                     <h5 class="text-light">Picture</h5>
                                     <input class="form-control text-light bg-dark" type="file" name="picture">
-                                    @if($trader->picture)
-                                    <img src="{{ asset($trader->picture) }}" alt="Trader Picture"
+                                    @if($trader->picture_url)
+                                    <img src="{{ asset($trader->picture_url) }}" alt="Trader Picture"
                                         class="img-thumbnail mt-2" width="100">
                                     @endif
                                 </div>
