@@ -33,7 +33,7 @@
                     <div class="pricing-table purple border p-4 card bg-dark shadow">
                         <!-- Trader Picture -->
                         <div class="price-tag">
-                            <img src="{{ asset($trader->picture) }}" class="card-img-top" alt="Trader Image"><br>
+                            <img src="{{ asset($trader->picture_url) }}" class="card-img-top" alt="Trader Image"><br>
                             <center><i>Expert Trader</i></center>
                             <h2 class="text-light">{{ $trader->name }}</h2>
                         </div>
