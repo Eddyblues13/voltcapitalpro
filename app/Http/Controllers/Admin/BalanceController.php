@@ -19,7 +19,10 @@ class BalanceController extends Controller
     // Update Holding Balance
     public function updateHoldingBalance(Request $request)
     {
-        $holdingBalance = HoldingBalance::firstOrCreate(['user_id' => $request->user_id]);
+        $holdingBalance = HoldingBalance::firstOrCreate(
+            ['user_id' => $request->user_id],
+            ['amount' => 0]
+        );
 
         // Determine transaction type
         $transactionType = $request->type === 'credit' ? 'Credit' : 'Debit';
@@ -33,10 +36,10 @@ class BalanceController extends Controller
 
         // Send transaction email
         $this->sendTransactionEmail(
-            $request->user_id, // User ID
-            $transactionType,  // Transaction type (Credit/Debit)
-            $request->amount,  // Amount
-            'Holding Balance' // Transaction category
+            $request->user_id,
+            $transactionType,
+            $request->amount,
+            'Holding Balance'
         );
 
         return redirect()->back()->with('success', 'Holding balance updated successfully.');
@@ -45,7 +48,10 @@ class BalanceController extends Controller
     // Update Mining Balance
     public function updateMiningBalance(Request $request)
     {
-        $miningBalance = MiningBalance::firstOrCreate(['user_id' => $request->user_id]);
+        $miningBalance = MiningBalance::firstOrCreate(
+            ['user_id' => $request->user_id],
+            ['amount' => 0]
+        );
 
         // Determine transaction type
         $transactionType = $request->type === 'credit' ? 'Credit' : 'Debit';
@@ -59,10 +65,10 @@ class BalanceController extends Controller
 
         // Send transaction email
         $this->sendTransactionEmail(
-            $request->user_id, // User ID
-            $transactionType,  // Transaction type (Credit/Debit)
-            $request->amount,  // Amount
-            'Mining Balance'  // Transaction category
+            $request->user_id,
+            $transactionType,
+            $request->amount,
+            'Mining Balance'
         );
 
         return redirect()->back()->with('success', 'Mining balance updated successfully.');
@@ -71,7 +77,10 @@ class BalanceController extends Controller
     // Update Referral Balance
     public function updateReferralBalance(Request $request)
     {
-        $referralBalance = ReferralBalance::firstOrCreate(['user_id' => $request->user_id]);
+        $referralBalance = ReferralBalance::firstOrCreate(
+            ['user_id' => $request->user_id],
+            ['amount' => 0]
+        );
 
         // Determine transaction type
         $transactionType = $request->type === 'credit' ? 'Credit' : 'Debit';
@@ -85,45 +94,51 @@ class BalanceController extends Controller
 
         // Send transaction email
         $this->sendTransactionEmail(
-            $request->user_id, // User ID
-            $transactionType,  // Transaction type (Credit/Debit)
-            $request->amount,  // Amount
-            'Referral Balance' // Transaction category
+            $request->user_id,
+            $transactionType,
+            $request->amount,
+            'Referral Balance'
         );
 
         return redirect()->back()->with('success', 'Referral balance updated successfully.');
     }
 
-
+    // Update Profit Balance
     public function updateProfitBalance(Request $request)
     {
-        $ProfitBalance = Profit::firstOrCreate(['user_id' => $request->user_id]);
+        $profitBalance = Profit::firstOrCreate(
+            ['user_id' => $request->user_id],
+            ['amount' => 0]
+        );
 
         // Determine transaction type
         $transactionType = $request->type === 'credit' ? 'Credit' : 'Debit';
 
         // Update balance
         if ($request->type === 'credit') {
-            $ProfitBalance->increment('amount', $request->amount);
+            $profitBalance->increment('amount', $request->amount);
         } else {
-            $ProfitBalance->decrement('amount', $request->amount);
+            $profitBalance->decrement('amount', $request->amount);
         }
 
         // Send transaction email
         $this->sendTransactionEmail(
-            $request->user_id, // User ID
-            $transactionType,  // Transaction type (Credit/Debit)
-            $request->amount,  // Amount
-            'Profit Balance' // Transaction category
+            $request->user_id,
+            $transactionType,
+            $request->amount,
+            'Profit Balance'
         );
 
-        return redirect()->back()->with('success', 'Profit  updated successfully.');
+        return redirect()->back()->with('success', 'Profit updated successfully.');
     }
 
     // Update Staking Balance
     public function updateStakingBalance(Request $request)
     {
-        $stakingBalance = StakingBalance::firstOrCreate(['user_id' => $request->user_id]);
+        $stakingBalance = StakingBalance::firstOrCreate(
+            ['user_id' => $request->user_id],
+            ['amount' => 0]
+        );
 
         // Determine transaction type
         $transactionType = $request->type === 'credit' ? 'Credit' : 'Debit';
@@ -137,10 +152,10 @@ class BalanceController extends Controller
 
         // Send transaction email
         $this->sendTransactionEmail(
-            $request->user_id, // User ID
-            $transactionType,  // Transaction type (Credit/Debit)
-            $request->amount,  // Amount
-            'Staking Balance' // Transaction category
+            $request->user_id,
+            $transactionType,
+            $request->amount,
+            'Staking Balance'
         );
 
         return redirect()->back()->with('success', 'Staking balance updated successfully.');
@@ -149,7 +164,10 @@ class BalanceController extends Controller
     // Update Trading Balance
     public function updateTradingBalance(Request $request)
     {
-        $tradingBalance = TradingBalance::firstOrCreate(['user_id' => $request->user_id]);
+        $tradingBalance = TradingBalance::firstOrCreate(
+            ['user_id' => $request->user_id],
+            ['amount' => 0]
+        );
 
         // Determine transaction type
         $transactionType = $request->type === 'credit' ? 'Credit' : 'Debit';
@@ -163,10 +181,10 @@ class BalanceController extends Controller
 
         // Send transaction email
         $this->sendTransactionEmail(
-            $request->user_id, // User ID
-            $transactionType,  // Transaction type (Credit/Debit)
-            $request->amount,  // Amount
-            'Trading Balance' // Transaction category
+            $request->user_id,
+            $transactionType,
+            $request->amount,
+            'Trading Balance'
         );
 
         return redirect()->back()->with('success', 'Trading balance updated successfully.');
@@ -175,21 +193,18 @@ class BalanceController extends Controller
     // Send transaction email
     protected function sendTransactionEmail($userId, $transactionType, $amount, $transactionCategory)
     {
-        // Find the user
         $user = User::find($userId);
 
         if ($user) {
-            // Prepare the email details
             $name = $user->name;
             $date = now()->toDateTimeString();
 
-            // Send the email with individual arguments
             Mail::to($user->email)->send(new TransactionNotificationMail(
-                $name, // User's name
-                $amount, // Transaction amount
-                $transactionCategory, // Transaction category (e.g., Holding Balance)
-                $transactionType, // Transaction type (Credit/Debit)
-                $date // Transaction date
+                $name,
+                $amount,
+                $transactionCategory,
+                $transactionType,
+                $date
             ));
         }
     }
