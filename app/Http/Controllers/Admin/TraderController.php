@@ -22,8 +22,6 @@ class TraderController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -33,8 +31,6 @@ class TraderController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function create()
     {
@@ -43,43 +39,45 @@ class TraderController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'trader_name' => 'required|string|max:255',
-            'followers' => 'required|numeric|min:0',
-            'copier_roi' => 'required|numeric|min:0',
-            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'risk_index' => 'required|numeric|min:0|max:100',
-            'total_copied_trade' => 'required|numeric|min:0',
-            'verified_status' => 'required',
+            'Name' => 'required|string|max:255',
+            'MinPortfolio' => 'required|numeric|min:0',
+            'Exprience' => 'required|numeric|min:0',
+            'PercentageGain' => 'required|numeric|min:0',
+            'CurrencyPair' => 'nullable|string|max:255',
+            'Details' => 'nullable|string',
+            'ProfilePic' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         try {
             // Handle picture upload to Cloudinary
-            if ($request->hasFile('picture')) {
-                $uploadResult = $this->uploadApi->upload(
-                    $request->file('picture')->getRealPath(),
-                    [
-                        'folder' => 'traders',
-                        'transformation' => [
-                            'width' => 300,
-                            'height' => 300,
-                            'crop' => 'fill',
-                            'gravity' => 'face',
-                        ]
+            $uploadResult = $this->uploadApi->upload(
+                $request->file('ProfilePic')->getRealPath(),
+                [
+                    'folder' => 'traders',
+                    'transformation' => [
+                        'width' => 300,
+                        'height' => 300,
+                        'crop' => 'fill',
+                        'gravity' => 'face',
                     ]
-                );
+                ]
+            );
 
-                $validated['picture_url'] = $uploadResult['secure_url'];
-                $validated['picture_public_id'] = $uploadResult['public_id'];
-            }
-
-            Trader::create($validated);
+            $trader = Trader::create([
+                'name' => $validated['Name'],
+                'min_amount' => $validated['MinPortfolio'],
+                'return_rate' => $validated['Exprience'],
+                'profit_share' => $validated['PercentageGain'],
+                'currency_pairs' => $validated['CurrencyPair'] ?? null,
+                'details' => $validated['Details'] ?? null,
+                'picture_url' => $uploadResult['secure_url'],
+                'picture_public_id' => $uploadResult['public_id'],
+                'is_verified' => $request->has('is_verified'),
+            ]);
 
             return redirect()->route('traders.index')->with('success', 'Trader created successfully!');
         } catch (\Exception $e) {
@@ -90,9 +88,6 @@ class TraderController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\Trader  $trader
-     * @return \Illuminate\Http\Response
      */
     public function show(Trader $trader)
     {
@@ -101,9 +96,6 @@ class TraderController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Trader  $trader
-     * @return \Illuminate\Http\Response
      */
     public function edit(Trader $trader)
     {
@@ -112,26 +104,32 @@ class TraderController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Trader  $trader
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Trader $trader)
     {
         $validated = $request->validate([
-            'trader_name' => 'required|string|max:255',
-            'followers' => 'required|numeric|min:0',
-            'copier_roi' => 'required|numeric|min:0',
-            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'risk_index' => 'required|numeric|min:0|max:100',
-            'total_copied_trade' => 'required|numeric|min:0',
-            'verified_status' => 'required',
+            'Name' => 'required|string|max:255',
+            'MinPortfolio' => 'required|numeric|min:0',
+            'Exprience' => 'required|numeric|min:0',
+            'PercentageGain' => 'required|numeric|min:0',
+            'CurrencyPair' => 'nullable|string|max:255',
+            'Details' => 'nullable|string',
+            'ProfilePic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         try {
-            // Handle picture upload to Cloudinary if new picture is provided
-            if ($request->hasFile('picture')) {
+            $updateData = [
+                'name' => $validated['Name'],
+                'min_amount' => $validated['MinPortfolio'],
+                'return_rate' => $validated['Exprience'],
+                'profit_share' => $validated['PercentageGain'],
+                'currency_pairs' => $validated['CurrencyPair'] ?? null,
+                'details' => $validated['Details'] ?? null,
+                'is_verified' => $request->has('is_verified'),
+            ];
+
+            // Handle picture upload if new picture is provided
+            if ($request->hasFile('ProfilePic')) {
                 // Delete old picture from Cloudinary if exists
                 if ($trader->picture_public_id) {
                     try {
@@ -143,7 +141,7 @@ class TraderController extends Controller
 
                 // Upload new picture
                 $uploadResult = $this->uploadApi->upload(
-                    $request->file('picture')->getRealPath(),
+                    $request->file('ProfilePic')->getRealPath(),
                     [
                         'folder' => 'traders',
                         'transformation' => [
@@ -155,11 +153,11 @@ class TraderController extends Controller
                     ]
                 );
 
-                $validated['picture_url'] = $uploadResult['secure_url'];
-                $validated['picture_public_id'] = $uploadResult['public_id'];
+                $updateData['picture_url'] = $uploadResult['secure_url'];
+                $updateData['picture_public_id'] = $uploadResult['public_id'];
             }
 
-            $trader->update($validated);
+            $trader->update($updateData);
 
             return redirect()->route('traders.index')->with('success', 'Trader updated successfully!');
         } catch (\Exception $e) {
@@ -170,9 +168,6 @@ class TraderController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Trader  $trader
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Trader $trader)
     {

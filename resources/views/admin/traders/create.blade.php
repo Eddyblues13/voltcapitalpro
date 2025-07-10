@@ -1,115 +1,141 @@
 @include('admin.header')
 
-<div class="main-panel">
-    <div class="content bg-dark">
-        <div class="page-inner">
-            @if(session('message'))
-            <div class="alert alert-success mb-2">{{ session('message') }}</div>
+<div class="container-fluid page-body-wrapper">
+    <div class="main-panel">
+        <div class="content-wrapper">
+
+            <h1>Create Trader</h1>
+
+            @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
             @endif
-            <div class="mt-2 mb-4">
-                <h1 class="title1 text-light">Add Trader</h1>
-            </div>
-            <div class="mb-5 row">
-                <div class="col-lg-12">
-                    <div class="p-3 card bg-dark">
-                        @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                        @endif
 
-                        @if ($errors->any()))
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                        @endif
-                        <form id="addTraderForm" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <h5 class="text-light">Trader Name</h5>
-                                    <input class="form-control text-light bg-dark" placeholder="Enter trader name"
-                                        type="text" name="name" value="{{ old('name') }}" required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <h5 class="text-light">Followers</h5>
-                                    <input class="form-control text-light bg-dark"
-                                        placeholder="Enter number of followers" type="text" name="followers"
-                                        value="{{ old('followers') }}" required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <h5 class="text-light">Return Rate</h5>
-                                    <input class="form-control text-light bg-dark" placeholder="Enter return rate"
-                                        type="text" name="return_rate" value="{{ old('return_rate') }}" required>
-                                </div>
-                                {{-- <div class="form-group col-md-6">
-                                    <h5 class="text-light">Minimum Amount</h5>
-                                    <input class="form-control text-light bg-dark" placeholder="Enter minimum amount"
-                                        type="text" name="min_amount" value="{{ old('min_amount') }}" required>
-                                </div> --}}
-                                {{-- <div class="form-group col-md-6">
-                                    <h5 class="text-light">Maximum Amount</h5>
-                                    <input class="form-control text-light bg-dark" placeholder="Enter maximum amount"
-                                        type="text" name="max_amount" value="{{ old('max_amount') }}" required>
-                                </div> --}}
-                                <div class="form-group col-md-6">
-                                    <h5 class="text-light">Profit Share</h5>
-                                    <input class="form-control text-light bg-dark" placeholder="Enter profit share"
-                                        type="text" name="profit_share" value="{{ old('profit_share') }}" required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <h5 class="text-light">Verified Status</h5>
-                                    <select class="form-control text-light bg-dark" name="is_verified">
-                                        <option value="1" {{ old('is_verified')=='1' ? 'selected' : '' }}>Verified
-                                        </option>
-                                        <option value="0" {{ old('is_verified')=='0' ? 'selected' : '' }}>Not Verified
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <h5 class="text-light">Picture</h5>
-                                    <input class="form-control text-light bg-dark" type="file" name="picture" required>
-                                </div>
-                                <div class="form-group col-md-12">
-                                    <input type="submit" class="btn btn-primary" value="Add Trader">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+            @if($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
+            <form method="post" enctype="multipart/form-data" class="m-5" action="/Admin/CreateTrader">
+                @csrf
+
+                <div class="validation-summary-valid" data-valmsg-summary="true">
+                    <ul>
+                        <li style="display:none"></li>
+                    </ul>
                 </div>
-            </div>
+
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" class="form-control" placeholder="Full Name" data-val="true"
+                        data-val-required="The Name field is required." id="Name" name="Name" value="{{ old('Name') }}">
+                    @error('Name')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label>Min. Portfolio</label>
+                    <input type="text" class="form-control" placeholder="Min. Amount" data-val="true"
+                        data-val-number="The field MinPortfolio must be a number."
+                        data-val-required="The MinPortfolio field is required." id="MinPortfolio" name="MinPortfolio"
+                        value="{{ old('MinPortfolio') }}" />
+                    @error('MinPortfolio')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label>Experience</label>
+                    <input type="text" class="form-control" data-val="true"
+                        data-val-number="The field Exprience must be a number."
+                        data-val-required="The Exprience field is required." id="Exprience" name="Exprience"
+                        value="{{ old('Exprience') }}" />
+                    @error('Exprience')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label>Percentage</label>
+                    <input type="text" class="form-control" placeholder="Percentage Charge" data-val="true"
+                        data-val-number="The field PercentageGain must be a number."
+                        data-val-required="The PercentageGain field is required." id="PercentageGain"
+                        name="PercentageGain" value="{{ old('PercentageGain') }}" />
+                    @error('PercentageGain')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label>Currency Pairs</label>
+                    <input type="text" class="form-control" id="CurrencyPair" name="CurrencyPair"
+                        value="{{ old('CurrencyPair') }}" />
+                    @error('CurrencyPair')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label>Details</label>
+                    <textarea class="form-control" rows="6" data-val="true"
+                        data-val-required="The Details field is required." id="Details" name="Details">
+                        {{ old('Details') }}
+                    </textarea>
+                    @error('Details')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label>Profile Pic</label>
+                    <input type="file" class="form-control" data-val="true"
+                        data-val-required="The ProfilePic field is required." id="ProfilePic" name="ProfilePic" />
+                    @error('ProfilePic')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <input id="submitbtn" type="submit" class="btn btn-primary" value="Create Trader">
+                <input name="__RequestVerificationToken" type="hidden" value="{{ csrf_token() }}" />
+            </form>
+
         </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+        <footer class="footer">
+            <div class="w-100 clearfix">
+                <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2018 <a
+                        href="https://wa.me/23409010297878" target="_blank">BenTech</a>. All rights reserved.</span>
+                <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">special <i
+                        class="icon-heart text-danger"></i></span>
+            </div>
+        </footer>
+        <!-- partial -->
     </div>
+    <!-- main-panel ends -->
+</div>
 
-    @include('admin.footer')
-
-    <script>
-        document.getElementById('addTraderForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            var formData = new FormData(this);
-
-            fetch("{{ route('admin.trades.store') }}", {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    toastr.success('Trader added successfully!');
-                    window.location.reload();
-                } else {
-                    toastr.error('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        });
-    </script>
+<!-- Rest of your existing scripts and styles -->
+<script>
+    // Display toast notifications
+    @if(Session::has('success'))
+        toastNotifySuccess("{{ Session::get('success') }}");
+    @endif
+    
+    @if(Session::has('error'))
+        toastNotifyError("{{ Session::get('error') }}");
+    @endif
+    
+    @if($errors->any())
+        @foreach($errors->all() as $error)
+            toastNotifyError("{{ $error }}");
+        @endforeach
+    @endif
+</script>

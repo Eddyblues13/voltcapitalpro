@@ -18,9 +18,9 @@
     <!-- Page Title -->
     <title>Login | Admin</title>
     <!-- StyleSheets -->
-    <link rel="stylesheet" href="{{ asset('admin/assets/css/dashlite.css?ver=2.4.0') }}">
-    <link rel="stylesheet" href="{{ asset('admin/scss/sweetalert.css') }}">
-    <link id="skin-default" rel="stylesheet" href="{{ asset('admin/assets/css/theme.css?ver=2.4.0') }}">
+    <link rel="stylesheet" href="{{ asset('admin_login/assets/css/dashlite.css?ver=2.4.0') }}">
+    <link rel="stylesheet" href="{{ asset('admin_login/scss/sweetalert.css') }}">
+    <link id="skin-default" rel="stylesheet" href="{{ asset('admin_login/assets/css/theme.css?ver=2.4.0') }}">
 </head>
 
 <body class="nk-body npc-crypto bg-white pg-auth">
@@ -118,9 +118,9 @@
     </div><!-- app body @e -->
 
     <!-- JavaScript -->
-    <script src="{{ asset('admin/assets/js/bundle.js?ver=2.4.0') }}"></script>
-    <script src="{{ asset('admin/assets/js/scripts.js?ver=2.4.0') }}"></script>
-    <script src="{{ asset('admin/assets/js/vendors/sweetalert.js') }}"></script>
+    <script src="{{ asset('admin_login/assets/js/bundle.js?ver=2.4.0') }}"></script>
+    <script src="{{ asset('admin_login/assets/js/scripts.js?ver=2.4.0') }}"></script>
+    <script src="{{ asset('admin_login/assets/js/vendors/sweetalert.js') }}"></script>
 </body>
 
 </html>

@@ -1,88 +1,116 @@
 @include('admin.header')
 
-<!-- End Sidebar -->
-<div class="main-panel">
-    <div class="content bg-dark">
-        <div class="page-inner">
-            @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-            @endif
+<div class="container-fluid page-body-wrapper">
+    <div class="main-panel">
+        <div class="content-wrapper">
 
-            @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
-            <div class="mt-2 mb-4">
-                <h1 class="title1 text-light">Expert Traders</h1>
-            </div>
-            <div class="mt-2 mb-3 col-lg-12">
-                <a class="btn btn-primary" href="{{ route('traders.create') }}">
-                    <i class="fa fa-plus"></i> Add A New Trader
+            <p>
+                <a href="{{ route('traders.create') }}" class="btn btn-outline-primary">
+                    <i class="icon-user-follow text-secondary"></i> Add Trader
                 </a>
-            </div>
-            <div class="mb-5 row">
-                @foreach($traders as $trader)
-                <div class="col-lg-4">
-                    <div class="pricing-table purple border p-4 card bg-dark shadow">
-                        <!-- Trader Picture -->
-                        <div class="price-tag">
-                            <img src="{{ asset($trader->picture_url) }}" class="card-img-top" alt="Trader Image"><br>
-                            <center><i>Expert Trader</i></center>
-                            <h2 class="text-light">{{ $trader->name }}</h2>
-                        </div>
+            </p>
 
-                        <!-- Trader Details -->
-                        <div class="pricing-features">
-                            <div class="feature text-light">
-                                Followers: <span class="text-light">{{ $trader->followers }}</span>
-                            </div>
-                            <div class="feature text-light">
-                                Return Rate: <span class="text-light">{{ $trader->return_rate }}%</span>
-                            </div>
-                            {{-- <div class="feature text-light">
-                                Minimum Amount: <span class="text-light">${{ $trader->min_amount }}</span>
-                            </div> --}}
-                            {{-- <div class="feature text-light">
-                                Maximum Amount: <span class="text-light">${{ $trader->max_amount }}</span>
-                            </div> --}}
-                            <div class="feature text-light">
-                                Profit Share: <span class="text-light">{{ $trader->profit_share }}%</span>
-                            </div>
-                            <div class="feature text-light">
-                                Verified Status: <span class="text-light">
-                                    {{ $trader->is_verified ? 'Verified' : 'Not Verified' }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="text-center mt-3">
-                            <a href="{{ route('traders.edit', $trader->id) }}" class="btn btn-primary">
-                                <i class="text-white flaticon-pencil"></i> Edit
-                            </a> &nbsp;
-
-                            <form action="{{ route('traders.destroy', $trader->id) }}" method="POST"
-                                style="display: inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">
-                                    <i class="text-white fa fa-times"></i> Delete
+            <h2>List of Traders</h2>
+            <div class="table-responsive">
+                <table id="order-listing" class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Profile Pic</th>
+                            <th>Return Rate</th>
+                            <th>Min Amount</th>
+                            <th>Max Amount</th>
+                            <th>Followers</th>
+                            <th>Verified</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($traders as $trader)
+                        <tr>
+                            <td>{{ $trader->name }}</td>
+                            <td>
+                                @if($trader->picture_url)
+                                <img src="{{ $trader->picture_url }}"
+                                    style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                                @else
+                                <div
+                                    style="width: 50px; height: 50px; border-radius: 50%; background-color: #ddd; display: flex; align-items: center; justify-content: center;">
+                                    <i class="icon-user"></i>
+                                </div>
+                                @endif
+                            </td>
+                            <td>{{ $trader->return_rate }}%</td>
+                            <td>${{ number_format($trader->min_amount) }}</td>
+                            <td>${{ number_format($trader->max_amount) }}</td>
+                            <td>{{ number_format($trader->followers) }}</td>
+                            <td>
+                                @if($trader->is_verified)
+                                <span class="badge badge-success">Verified</span>
+                                @else
+                                <span class="badge badge-secondary">Not Verified</span>
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('traders.edit', $trader->id) }}" class="btn btn-outline-primary">
+                                    <i class="icon-eye"></i> Edit
+                                </a>
+                                <button onclick="deleteTrader('{{ route('traders.destroy', $trader->id) }}')"
+                                    class="btn btn-outline-danger user-delete">
+                                    <i class="icon-trash"></i> Delete
                                 </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
+        <!-- content-wrapper ends -->
+
+        @include('admin.footer')
     </div>
+    <!-- main-panel ends -->
 </div>
 
-@include('admin.footer')
+<div class="loaderbody hide" id="loaderbody">
+    <div class="loadercircle"></div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    function deleteTrader(url) {
+        if (confirm('Are you sure to delete this trader?') == true) {
+            $("#loaderbody").removeClass('hide');
+            
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                data: {
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    $("#loaderbody").addClass('hide');
+                    if(response.success) {
+                        toastNotifySuccess(response.message);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        toastNotifyError(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    $("#loaderbody").addClass('hide');
+                    toastNotifyError(xhr.responseJSON.message || 'An error occurred');
+                }
+            });
+        }
+    }
+</script>
+
+<!-- Include your JS files here -->
+<script src="/Account/js/data-table.js"></script>
+<script src="/Account/vendors/js/vendor.bundle.base.js"></script>
+<script src="/Account/vendors/js/vendor.bundle.addons.js"></script>
+<script src="/Account/js/template.js"></script>

@@ -2,200 +2,112 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 class ManageUserController extends Controller
 {
-    public function index()
+    public function dashboard()
     {
-        $users = User::with('referrer')->latest()->get();
-        return view('admin.user.index', compact('users'));
+        $users = User::with(['holdingBalance', 'profitBalance', 'referralBalance'])->get();
+        return view('admin.dashboard', compact('users'));
     }
 
-    public function create()
+    public function showClient(User $user)
     {
-        $referrers = User::whereNotNull('referral_code')->get();
-        return view('admin.user.create', compact('referrers'));
+        $user->load(['holdingBalance', 'profitBalance', 'referralBalance']);
+        return view('admin.client-details', compact('user'));
     }
 
-    public function store(Request $request)
+
+    public function deposit($userId)
     {
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'phone_number' => 'nullable|string|max:20',
-            'country' => 'required|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'currency' => 'nullable|string|max:3',
-            'password' => 'required|string|min:8|confirmed',
-            'referred_by' => 'nullable|exists:users,id',
-            'user_status' => 'required|in:active,inactive,banned',
-            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        return view('admin.deposit-user', ['userId' => $userId]);
+    }
+
+    public function upgrade(User $user)
+    {
+        return view('admin.upgrade', compact('user'));
+    }
+
+    public function trade(User $user)
+    {
+        return view('admin.trade', compact('user'));
+    }
+
+    public function edit(User $user)
+    {
+        return view('admin.edit-client', compact('user'));
+    }
+
+    public function editBill(User $user)
+    {
+        return view('admin.edit-bill', compact('user'));
+    }
+
+    // AJAX Actions
+    public function topup(Request $request, User $user)
+    {
+        $user->update(['top_up_status' => true]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Account top-up enabled successfully'
         ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        try {
-            $data = $request->except('profile_photo', 'password');
-            $data['password'] = Hash::make($request->password);
-            $data['referral_code'] = $this->generateReferralCode();
-
-            if ($request->hasFile('profile_photo')) {
-                $data['profile_photo'] = $request->file('profile_photo')->store('profile-photos', 'public');
-            }
-
-            User::create($data);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'User created successfully!',
-                'redirect' => route('admin.users.index')
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error creating user: ' . $e->getMessage()
-            ], 500);
-        }
     }
 
-    public function edit($id)
+    public function paidRegisterFee(Request $request, User $user)
     {
-        $user = User::findOrFail($id);
-        $referrers = User::whereNotNull('referral_code')->where('id', '!=', $id)->get();
-        return view('admin.user.edit', compact('user', 'referrers'));
-    }
+        $user->update(['confirmed_registration_fee' => true]);
 
-    public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users')->ignore($user->id),
-            ],
-            'phone_number' => 'nullable|string|max:20',
-            'country' => 'required|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'currency' => 'nullable|string|max:3',
-            'referred_by' => 'nullable|exists:users,id',
-            'user_status' => 'required|in:active,inactive,banned',
-            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'email_verification' => 'boolean',
-            'id_verification' => 'boolean',
-            'address_verification' => 'boolean',
-            'signal_strength' => 'required|integer|between:1,100',
-
+        return response()->json([
+            'success' => true,
+            'message' => 'Registration fee confirmed successfully'
         ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        try {
-            $data = $request->except('profile_photo', 'password');
-
-            if ($request->filled('password')) {
-                $data['password'] = Hash::make($request->password);
-            }
-
-            if ($request->hasFile('profile_photo')) {
-                // Delete old profile photo if exists
-                if ($user->profile_photo) {
-                    Storage::disk('public')->delete($user->profile_photo);
-                }
-                $data['profile_photo'] = $request->file('profile_photo')->store('profile-photos', 'public');
-            }
-
-            $user->update($data);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'User updated successfully!',
-                'redirect' => route('admin.users.edit', ['user' => $user->id])
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error updating user: ' . $e->getMessage()
-            ], 500);
-        }
     }
 
-    public function destroy($id)
+    public function onNotify(Request $request, User $user)
     {
-        try {
-            $user = User::findOrFail($id);
-            $user->delete();
+        $user->update(['notification_status' => !$user->notification_status]);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'User deleted successfully!'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error deleting user: ' . $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Notification status toggled successfully',
+            'new_status' => $user->notification_status
+        ]);
     }
 
-    private function generateReferralCode()
+    public function onTopup(Request $request, User $user)
     {
-        $code = strtoupper(substr(md5(uniqid()), 0, 8));
+        $user->update(['top_up_status' => !$user->top_up_status]);
 
-        // Ensure code is unique
-        while (User::where('referral_code', $code)->exists()) {
-            $code = strtoupper(substr(md5(uniqid()), 0, 8));
-        }
-
-        return $code;
+        return response()->json([
+            'success' => true,
+            'message' => 'Top-up status toggled successfully',
+            'new_status' => $user->top_up_status
+        ]);
     }
 
-
-    public function updateStatus(Request $request)
+    public function onSub(Request $request, User $user)
     {
-        $user = User::findOrFail($request->user_id);
-        $field = $request->field;
-        $value = $request->value;
+        $user->update(['subscription_status' => !$user->subscription_status]);
 
-        // Validate the field exists and is boolean
-        if (!in_array($field, [
-            'top_up_mail',
-            'notification_status',
-            'network_status',
-            'upgrade_status',
-            'confirmed_registration_fee',
-            'top_up_status',
-            'subscription_status'
-        ])) {
-            return response()->json(['success' => false, 'message' => 'Invalid field']);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Subscription status toggled successfully',
+            'new_status' => $user->subscription_status
+        ]);
+    }
 
-        $user->$field = $value;
-        $user->save();
+    public function onNetwork(Request $request, User $user)
+    {
+        $user->update(['network_status' => !$user->network_status]);
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Network status toggled successfully',
+            'new_status' => $user->network_status
+        ]);
     }
 }
