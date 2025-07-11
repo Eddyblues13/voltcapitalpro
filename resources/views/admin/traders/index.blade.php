@@ -3,7 +3,6 @@
 <div class="container-fluid page-body-wrapper">
     <div class="main-panel">
         <div class="content-wrapper">
-
             <p>
                 <a href="{{ route('traders.create') }}" class="btn btn-outline-primary">
                     <i class="icon-user-follow text-secondary"></i> Add Trader
@@ -76,41 +75,3 @@
 <div class="loaderbody hide" id="loaderbody">
     <div class="loadercircle"></div>
 </div>
-
-<!-- JavaScript -->
-<script>
-    function deleteTrader(url) {
-        if (confirm('Are you sure to delete this trader?') == true) {
-            $("#loaderbody").removeClass('hide');
-            
-            $.ajax({
-                type: 'DELETE',
-                url: url,
-                data: {
-                    '_token': '{{ csrf_token() }}'
-                },
-                success: function (response) {
-                    $("#loaderbody").addClass('hide');
-                    if(response.success) {
-                        toastNotifySuccess(response.message);
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1500);
-                    } else {
-                        toastNotifyError(response.message);
-                    }
-                },
-                error: function(xhr) {
-                    $("#loaderbody").addClass('hide');
-                    toastNotifyError(xhr.responseJSON.message || 'An error occurred');
-                }
-            });
-        }
-    }
-</script>
-
-<!-- Include your JS files here -->
-<script src="/Account/js/data-table.js"></script>
-<script src="/Account/vendors/js/vendor.bundle.base.js"></script>
-<script src="/Account/vendors/js/vendor.bundle.addons.js"></script>
-<script src="/Account/js/template.js"></script>

@@ -3,7 +3,6 @@
 <div class="container-fluid page-body-wrapper">
     <div class="main-panel">
         <div class="content-wrapper">
-
             <h1>Edit Trader</h1>
 
             @if(session('success'))
@@ -22,100 +21,99 @@
             </div>
             @endif
 
-            <form method="post" enctype="multipart/form-data" class="m-5" action="/Admin/EditTrader/{{ $trader->id }}">
+            <form method="POST" enctype="multipart/form-data" class="m-5"
+                action="{{ route('traders.update', $trader->id) }}">
                 @csrf
                 @method('PUT')
 
-                <div class="validation-summary-valid" data-valmsg-summary="true">
-                    <ul>
-                        <li style="display:none"></li>
-                    </ul>
-                </div>
 
                 <div class="form-group">
                     <label>Name</label>
-                    <input type="text" class="form-control" placeholder="Full Name" data-val="true"
-                        data-val-required="The Name field is required." id="Name" name="Name"
-                        value="{{ old('Name', $trader->name) }}">
-                    @error('Name')
+                    <input type="text" class="form-control" placeholder="Full Name" name="name"
+                        value="{{ old('name', $trader->name) }}" required>
+                    @error('name')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Min. Portfolio</label>
-                    <input type="text" class="form-control" placeholder="Min. Amount" data-val="true"
-                        data-val-number="The field MinPortfolio must be a number."
-                        data-val-required="The MinPortfolio field is required." id="MinPortfolio" name="MinPortfolio"
-                        value="{{ old('MinPortfolio', $trader->min_amount) }}" />
-                    @error('MinPortfolio')
+                    <label>Min. Portfolio ($)</label>
+                    <input type="number" class="form-control" placeholder="Min. Amount" name="min_amount" step="0.01"
+                        min="0" max="999999999999.99" value="{{ old('min_amount', $trader->min_amount) }}" required>
+                    @error('min_amount')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Experience</label>
-                    <input type="text" class="form-control" data-val="true"
-                        data-val-number="The field Exprience must be a number."
-                        data-val-required="The Exprience field is required." id="Exprience" name="Exprience"
-                        value="{{ old('Exprience', $trader->return_rate) }}" />
-                    @error('Exprience')
+                    <label>Max. Portfolio ($)</label>
+                    <input type="number" class="form-control" placeholder="Max. Amount" name="max_amount" step="0.01"
+                        min="0" max="999999999999.99" value="{{ old('max_amount', $trader->max_amount) }}" required>
+                    @error('max_amount')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Percentage</label>
-                    <input type="text" class="form-control" placeholder="Percentage Charge" data-val="true"
-                        data-val-number="The field PercentageGain must be a number."
-                        data-val-required="The PercentageGain field is required." id="PercentageGain"
-                        name="PercentageGain" value="{{ old('PercentageGain', $trader->profit_share) }}" />
-                    @error('PercentageGain')
+                    <label>Return Rate (%)</label>
+                    <input type="number" class="form-control" name="return_rate" step="0.01" min="0" max="999999.99"
+                        value="{{ old('return_rate', $trader->return_rate) }}" required>
+                    @error('return_rate')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Currency Pairs</label>
-                    <input type="text" class="form-control" id="CurrencyPair" name="CurrencyPair"
-                        value="{{ old('CurrencyPair', $trader->currency_pairs) }}" />
-                    @error('CurrencyPair')
+                    <label>Profit Share (%)</label>
+                    <input type="number" class="form-control" name="profit_share" step="0.01" min="0" max="999.99"
+                        value="{{ old('profit_share', $trader->profit_share) }}" required>
+                    @error('profit_share')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Details</label>
-                    <textarea class="form-control" rows="6" data-val="true"
-                        data-val-required="The Details field is required." id="Details" name="Details">
-                        {{ old('Details', $trader->details) }}
-                    </textarea>
-                    @error('Details')
+                    <label>Followers</label>
+                    <input type="number" class="form-control" name="followers" min="0"
+                        value="{{ old('followers', $trader->followers) }}">
+                    @error('followers')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Profile Pic</label>
+                    <label>Verified Status</label>
+                    <select class="form-control" name="is_verified">
+                        <option value="0" {{ !$trader->is_verified ? 'selected' : '' }}>Not Verified</option>
+                        <option value="1" {{ $trader->is_verified ? 'selected' : '' }}>Verified</option>
+                    </select>
+                    @error('is_verified')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label>Profile Picture</label>
                     @if($trader->picture_url)
                     <div class="mb-2">
                         <img src="{{ $trader->picture_url }}" style="width: 100px; height: 100px; object-fit: cover;"
                             class="img-thumbnail">
+                        <div class="form-check mt-2">
+                            <input type="checkbox" class="form-check-input" id="remove_picture" name="remove_picture">
+                            <label class="form-check-label" for="remove_picture">Remove current picture</label>
+                        </div>
                     </div>
                     @endif
-                    <input type="file" class="form-control" id="ProfilePic" name="ProfilePic" />
-                    @error('ProfilePic')
+                    <input type="file" class="form-control" name="picture_url">
+                    @error('picture_url')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <input id="submitbtn" type="submit" class="btn btn-primary" value="Update Trader">
-                <input name="__RequestVerificationToken" type="hidden" value="{{ csrf_token() }}" />
+                <button type="submit" class="btn btn-primary">Update Trader</button>
             </form>
-
         </div>
-        <!-- content-wrapper ends -->
-        <!-- partial:partials/_footer.html -->
+
         <footer class="footer">
             <div class="w-100 clearfix">
                 <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2018 <a
@@ -124,12 +122,9 @@
                         class="icon-heart text-danger"></i></span>
             </div>
         </footer>
-        <!-- partial -->
     </div>
-    <!-- main-panel ends -->
 </div>
 
-<!-- Rest of your existing scripts and styles -->
 <script>
     // Display toast notifications
     @if(Session::has('success'))

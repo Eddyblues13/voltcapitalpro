@@ -43,19 +43,26 @@ class TraderController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'Name' => 'required|string|max:255',
-            'MinPortfolio' => 'required|numeric|min:0',
-            'Exprience' => 'required|numeric|min:0',
-            'PercentageGain' => 'required|numeric|min:0',
-            'CurrencyPair' => 'nullable|string|max:255',
-            'Details' => 'nullable|string',
-            'ProfilePic' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'name' => 'required|string|max:255',
+            'min_amount' => 'required|numeric|min:0|max:999999999999.99',
+            'max_amount' => 'required|numeric|min:0|max:999999999999.99|gte:min_amount',
+            'return_rate' => 'required|numeric|min:0|max:999999.99',
+            'profit_share' => 'required|numeric|min:0|max:999.99',
+            'followers' => 'nullable|integer|min:0',
+            'currency_pairs' => 'nullable|string|max:255',
+            'details' => 'nullable|string',
+            'picture_url' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_verified' => 'nullable|boolean',
         ]);
 
         try {
-            // Handle picture upload to Cloudinary
-            $uploadResult = $this->uploadApi->upload(
-                $request->file('ProfilePic')->getRealPath(),
+            if (!$request->hasFile('picture_url')) {
+                return back()->with('error', 'Picture upload failed.');
+            }
+
+            // Upload picture to Cloudinary
+            $uploadResult = Cloudinary::upload(
+                $request->file('picture_url')->getRealPath(),
                 [
                     'folder' => 'traders',
                     'transformation' => [
@@ -67,16 +74,19 @@ class TraderController extends Controller
                 ]
             );
 
-            $trader = Trader::create([
-                'name' => $validated['Name'],
-                'min_amount' => $validated['MinPortfolio'],
-                'return_rate' => $validated['Exprience'],
-                'profit_share' => $validated['PercentageGain'],
-                'currency_pairs' => $validated['CurrencyPair'] ?? null,
-                'details' => $validated['Details'] ?? null,
+            Trader::create([
+                'name' => $validated['name'],
+                'min_amount' => $validated['min_amount'],
+                'max_amount' => $validated['max_amount'],
+                'return_rate' => $validated['return_rate'],
+                'profit_share' => $validated['profit_share'],
+                'followers' => $validated['followers'] ?? 0,
+                'currency_pairs' => $validated['currency_pairs'] ?? null,
+                'details' => $validated['details'] ?? null,
                 'picture_url' => $uploadResult['secure_url'],
                 'picture_public_id' => $uploadResult['public_id'],
-                'is_verified' => $request->has('is_verified'),
+                'is_verified' => $validated['is_verified'] ?? false,
+                'verified_badge' => ($validated['is_verified'] ?? false) ? 'verified' : null,
             ]);
 
             return redirect()->route('traders.index')->with('success', 'Trader created successfully!');
@@ -85,6 +95,7 @@ class TraderController extends Controller
             return back()->withInput()->with('error', 'Failed to create trader. Please try again.');
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -108,40 +119,40 @@ class TraderController extends Controller
     public function update(Request $request, Trader $trader)
     {
         $validated = $request->validate([
-            'Name' => 'required|string|max:255',
-            'MinPortfolio' => 'required|numeric|min:0',
-            'Exprience' => 'required|numeric|min:0',
-            'PercentageGain' => 'required|numeric|min:0',
-            'CurrencyPair' => 'nullable|string|max:255',
-            'Details' => 'nullable|string',
-            'ProfilePic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'name' => 'required|string|max:255',
+            'min_amount' => 'required|numeric|min:0|max:999999999999.99',
+            'max_amount' => 'required|numeric|min:0|max:999999999999.99|gte:min_amount',
+            'return_rate' => 'required|numeric|min:0|max:999999.99',
+            'profit_share' => 'required|numeric|min:0|max:999.99',
+            'followers' => 'nullable|integer|min:0',
+            'is_verified' => 'required|boolean',
+            'picture_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'remove_picture' => 'nullable|boolean',
         ]);
 
         try {
-            $updateData = [
-                'name' => $validated['Name'],
-                'min_amount' => $validated['MinPortfolio'],
-                'return_rate' => $validated['Exprience'],
-                'profit_share' => $validated['PercentageGain'],
-                'currency_pairs' => $validated['CurrencyPair'] ?? null,
-                'details' => $validated['Details'] ?? null,
-                'is_verified' => $request->has('is_verified'),
-            ];
-
-            // Handle picture upload if new picture is provided
-            if ($request->hasFile('ProfilePic')) {
-                // Delete old picture from Cloudinary if exists
+            // Remove picture if requested
+            if ($request->has('remove_picture') && $request->boolean('remove_picture')) {
+                // Optionally: delete from cloud storage if needed
                 if ($trader->picture_public_id) {
-                    try {
-                        $this->uploadApi->destroy($trader->picture_public_id);
-                    } catch (\Exception $e) {
-                        Log::error("Failed to delete old trader photo: " . $e->getMessage());
-                    }
+                    Cloudinary::destroy($trader->picture_public_id);
                 }
 
-                // Upload new picture
-                $uploadResult = $this->uploadApi->upload(
-                    $request->file('ProfilePic')->getRealPath(),
+                $trader->update([
+                    'picture_url' => null,
+                    'picture_public_id' => null,
+                ]);
+            }
+
+            // Upload new picture if provided
+            if ($request->hasFile('picture_url')) {
+                // First delete the old picture if it exists
+                if ($trader->picture_public_id) {
+                    Cloudinary::destroy($trader->picture_public_id);
+                }
+
+                $uploadResult = Cloudinary::upload(
+                    $request->file('picture_url')->getRealPath(),
                     [
                         'folder' => 'traders',
                         'transformation' => [
@@ -153,18 +164,25 @@ class TraderController extends Controller
                     ]
                 );
 
-                $updateData['picture_url'] = $uploadResult['secure_url'];
-                $updateData['picture_public_id'] = $uploadResult['public_id'];
+                $validated['picture_url'] = $uploadResult['secure_url'];
+                $validated['picture_public_id'] = $uploadResult['public_id'];
             }
 
-            $trader->update($updateData);
+            // Remove 'remove_picture' from validated to avoid filling unnecessary column
+            unset($validated['remove_picture']);
 
-            return redirect()->route('traders.index')->with('success', 'Trader updated successfully!');
+            // Update the trader record
+            $trader->update($validated);
+
+            return back()->with('success', 'Trader updated successfully!');
         } catch (\Exception $e) {
             Log::error('Trader update failed: ' . $e->getMessage());
             return back()->withInput()->with('error', 'Failed to update trader. Please try again.');
         }
     }
+
+
+
 
     /**
      * Remove the specified resource from storage.

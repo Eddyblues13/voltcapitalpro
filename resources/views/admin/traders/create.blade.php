@@ -3,7 +3,6 @@
 <div class="container-fluid page-body-wrapper">
     <div class="main-panel">
         <div class="content-wrapper">
-
             <h1>Create Trader</h1>
 
             @if(session('success'))
@@ -22,93 +21,95 @@
             </div>
             @endif
 
-            <form method="post" enctype="multipart/form-data" class="m-5" action="/Admin/CreateTrader">
+            <form method="post" enctype="multipart/form-data" class="m-5" action="{{ route('traders.store') }}">
                 @csrf
 
-                <div class="validation-summary-valid" data-valmsg-summary="true">
-                    <ul>
-                        <li style="display:none"></li>
-                    </ul>
-                </div>
-
                 <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" class="form-control" placeholder="Full Name" data-val="true"
-                        data-val-required="The Name field is required." id="Name" name="Name" value="{{ old('Name') }}">
-                    @error('Name')
+                    <label>Name*</label>
+                    <input type="text" class="form-control" name="name" value="{{ old('name') }}" required>
+                    @error('name')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Min. Portfolio</label>
-                    <input type="text" class="form-control" placeholder="Min. Amount" data-val="true"
-                        data-val-number="The field MinPortfolio must be a number."
-                        data-val-required="The MinPortfolio field is required." id="MinPortfolio" name="MinPortfolio"
-                        value="{{ old('MinPortfolio') }}" />
-                    @error('MinPortfolio')
+                    <label>Min. Portfolio ($)*</label>
+                    <input type="number" class="form-control" name="min_amount" step="0.01" min="0"
+                        max="999999999999.99" value="{{ old('min_amount') }}" required>
+                    @error('min_amount')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Experience</label>
-                    <input type="text" class="form-control" data-val="true"
-                        data-val-number="The field Exprience must be a number."
-                        data-val-required="The Exprience field is required." id="Exprience" name="Exprience"
-                        value="{{ old('Exprience') }}" />
-                    @error('Exprience')
+                    <label>Max. Portfolio ($)*</label>
+                    <input type="number" class="form-control" name="max_amount" step="0.01" min="0"
+                        max="999999999999.99" value="{{ old('max_amount') }}" required>
+                    @error('max_amount')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Percentage</label>
-                    <input type="text" class="form-control" placeholder="Percentage Charge" data-val="true"
-                        data-val-number="The field PercentageGain must be a number."
-                        data-val-required="The PercentageGain field is required." id="PercentageGain"
-                        name="PercentageGain" value="{{ old('PercentageGain') }}" />
-                    @error('PercentageGain')
+                    <label>Return Rate (%)*</label>
+                    <input type="number" class="form-control" name="return_rate" step="0.01" min="0" max="999999.99"
+                        value="{{ old('return_rate') }}" required>
+                    @error('return_rate')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label>Profit Share (%)*</label>
+                    <input type="number" class="form-control" name="profit_share" step="0.01" min="0" max="999.99"
+                        value="{{ old('profit_share') }}" required>
+                    @error('profit_share')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label>Followers</label>
+                    <input type="number" class="form-control" name="followers" min="0"
+                        value="{{ old('followers', 0) }}">
+                    @error('followers')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
                     <label>Currency Pairs</label>
-                    <input type="text" class="form-control" id="CurrencyPair" name="CurrencyPair"
-                        value="{{ old('CurrencyPair') }}" />
-                    @error('CurrencyPair')
+                    <input type="text" class="form-control" name="currency_pairs" value="{{ old('currency_pairs') }}">
+                    @error('currency_pairs')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
                     <label>Details</label>
-                    <textarea class="form-control" rows="6" data-val="true"
-                        data-val-required="The Details field is required." id="Details" name="Details">
-                        {{ old('Details') }}
-                    </textarea>
-                    @error('Details')
+                    <textarea class="form-control" rows="6" name="details">{{ old('details') }}</textarea>
+                    @error('details')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Profile Pic</label>
-                    <input type="file" class="form-control" data-val="true"
-                        data-val-required="The ProfilePic field is required." id="ProfilePic" name="ProfilePic" />
-                    @error('ProfilePic')
+                    <label>Profile Picture*</label>
+                    <input type="file" class="form-control" name="picture_url" required>
+                    @error('picture_url')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <input id="submitbtn" type="submit" class="btn btn-primary" value="Create Trader">
-                <input name="__RequestVerificationToken" type="hidden" value="{{ csrf_token() }}" />
-            </form>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" name="is_verified" id="is_verified" value="1">
+                    <label class="form-check-label" for="is_verified">Verified Trader</label>
+                </div>
 
+                <button type="submit" class="btn btn-primary">Create Trader</button>
+            </form>
         </div>
-        <!-- content-wrapper ends -->
-        <!-- partial:partials/_footer.html -->
+
         <footer class="footer">
             <div class="w-100 clearfix">
                 <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2018 <a
@@ -117,12 +118,9 @@
                         class="icon-heart text-danger"></i></span>
             </div>
         </footer>
-        <!-- partial -->
     </div>
-    <!-- main-panel ends -->
 </div>
 
-<!-- Rest of your existing scripts and styles -->
 <script>
     // Display toast notifications
     @if(Session::has('success'))
