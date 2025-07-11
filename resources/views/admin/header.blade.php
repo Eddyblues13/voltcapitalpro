@@ -76,21 +76,21 @@
                     <div class="container">
                         <ul class="nav page-navigation">
                             <li class="nav-item">
-                                <a href="{{ url('Admin/Dashboard') }}" class="nav-link">
+                                <a href="{{ route('admin.home') }}" class="nav-link">
                                     <i class="link-icon icon-screen-desktop"></i>
                                     <span class="menu-title">Dashboard</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('Admin/withdrawal') }}" class="nav-link">
+                                <a href="{{ route('admin.withdrawals.index') }}" class="nav-link">
                                     <i class="link-icon fa fa-bar-chart"></i>
                                     <span class="menu-title">Withdrawal Request</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('Admin/DepisitLog') }}" class="nav-link">
+                                <a href="{{ route('admin.deposits.index') }}" class="nav-link">
                                     <i class="link-icon icon-film"></i>
-                                    <span class="menu-title">Transaction</span>
+                                    <span class="menu-title">Manage Deposit</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -106,13 +106,13 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('Admin/PaymentMethod') }}" class="nav-link">
+                                <a href="{{ route('admin.wallet_options.index') }}" class="nav-link">
                                     <i class="link-icon icon-wallet"></i>
                                     <span class="menu-title">Payment Method</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('/Plan') }}" class="nav-link">
+                                <a href="{{ route('admin.plans.index') }}" class="nav-link">
                                     <i class="link-icon icon-list"></i>
                                     <span class="menu-title">Package List</span>
                                 </a>

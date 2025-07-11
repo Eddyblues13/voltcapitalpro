@@ -205,7 +205,7 @@ Route::post('admin/login', [App\Http\Controllers\Auth\AdminLoginController::clas
 
 
 
-Route::prefix('Admin')->group(function () {    // Protecting admin routes using the 'admin' middleware
+Route::prefix('admin')->group(function () {    // Protecting admin routes using the 'admin' middleware
     Route::post('logout', [App\Http\Controllers\Auth\AdminLoginController::class, 'logout'])->name('logout');
     Route::middleware(['admin'])->group(function () { // Admin Profile Routes
 
@@ -259,6 +259,39 @@ Route::prefix('Admin')->group(function () {    // Protecting admin routes using 
 
         // Traders Routes
         Route::resource('traders', \App\Http\Controllers\Admin\TraderController::class);
+
+
+
+        Route::resource('wallet_options', \App\Http\Controllers\Admin\WalletOptionController::class)
+            ->names([
+                'index' => 'admin.wallet_options.index',
+                'store' => 'admin.wallet_options.store',
+                'update' => 'admin.wallet_options.update',
+                'destroy' => 'admin.wallet_options.destroy',
+            ]);
+
+
+
+        Route::resource('plans', \App\Http\Controllers\Admin\ManagePlan::class)
+            ->names([
+                'index' => 'admin.plans.index',
+                'store' => 'admin.plans.store',
+                'update' => 'admin.plans.update',
+                'destroy' => 'admin.plans.destroy',
+            ]);
+
+
+
+        // Deposits Management
+        Route::get('/deposits', [App\Http\Controllers\Admin\DepositController::class, 'index'])->name('admin.deposits.index');
+        Route::put('/deposits/{deposit}', [App\Http\Controllers\Admin\DepositController::class, 'update'])->name('admin.deposits.update');
+        Route::delete('/deposits/{deposit}', [App\Http\Controllers\Admin\DepositController::class, 'destroy'])->name('admin.deposits.destroy');
+
+
+        // Withdrawals Management
+        Route::get('/withdrawals', [App\Http\Controllers\Admin\WithdrawalController::class, 'index'])->name('admin.withdrawals.index');
+        Route::put('/withdrawals/{withdrawal}', [App\Http\Controllers\Admin\WithdrawalController::class, 'update'])->name('admin.withdrawals.update');
+        Route::delete('/withdrawals/{withdrawal}', [App\Http\Controllers\Admin\WithdrawalController::class, 'destroy'])->name('admin.withdrawals.destroy');
 
 
         // Other admin routes

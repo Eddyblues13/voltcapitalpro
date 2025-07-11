@@ -2,85 +2,81 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\User;
-use App\Models\User\Withdrawal;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User\Withdrawal;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class WithdrawalController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $withdrawals = Withdrawal::with('user')
-            ->when($request->status, function ($query) use ($request) {
-                return $query->where('status', $request->status);
-            })
-            ->latest()
-            ->paginate(10000000); // Adjust pagination count as needed
-
-        return view('admin.withdrawals.index', compact('withdrawals'));
+        $withdrawals = Withdrawal::with('user')->latest()->get();
+        return view('admin.manage_withdrawal', compact('withdrawals'));
     }
 
-    public function approve($id)
+    public function update(Request $request, Withdrawal $withdrawal)
     {
-        try {
-            $withdrawal = Withdrawal::findOrFail($id);
+        $request->validate([
+            'account_type' => 'required|in:Bank,Crypto',
+            'crypto_currency' => 'required_if:account_type,Crypto|nullable|string|max:255',
+            'amount' => 'required|numeric|min:0.00000001',
+            'wallet_address' => 'required_if:account_type,Crypto|nullable|string|max:255',
+            'status' => 'required|in:pending,approved,rejected',
+        ]);
 
-            if ($withdrawal->status != 'pending') {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Withdrawal has already been processed'
-                ], 400);
+        try {
+            $originalStatus = $withdrawal->status;
+            $withdrawal->update($request->all());
+
+            // If status changed from pending to approved, deduct from user balance
+            if ($originalStatus == 'pending' && $request->status == 'approved') {
+                $user = User::find($withdrawal->user_id);
+                $user->balance -= $withdrawal->amount;
+                $user->save();
             }
 
-            // Update withdrawal status
-            $withdrawal->update(['status' => 'approved']);
+            // If status changed from approved to rejected, refund user balance
+            if ($originalStatus == 'approved' && $request->status == 'rejected') {
+                $user = User::find($withdrawal->user_id);
+                $user->balance += $withdrawal->amount;
+                $user->save();
+            }
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Withdrawal approved successfully!'
-            ]);
+            return $request->wantsJson()
+                ? response()->json(['success' => true, 'message' => 'Withdrawal updated successfully'])
+                : redirect()->route('admin.withdrawals.index')->with('success', 'Withdrawal updated successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error approving withdrawal: ' . $e->getMessage()
-            ], 500);
+            Log::error('Withdrawal update error: ' . $e->getMessage());
+
+            return $request->wantsJson()
+                ? response()->json(['success' => false, 'message' => 'Failed to update withdrawal'], 500)
+                : redirect()->back()->with('error', 'Failed to update withdrawal');
         }
     }
 
-    public function reject($id)
+    public function destroy(Withdrawal $withdrawal)
     {
         try {
-            $withdrawal = Withdrawal::findOrFail($id);
-
-            if ($withdrawal->status != 'pending') {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Withdrawal has already been processed'
-                ], 400);
+            // If withdrawal was approved, refund user balance before deleting
+            if ($withdrawal->status == 'approved') {
+                $user = User::find($withdrawal->user_id);
+                $user->balance += $withdrawal->amount;
+                $user->save();
             }
 
-            // Refund the amount if rejected
-            // $user = User::find($withdrawal->user_id);
-            // if ($withdrawal->account_type == 'crypto') {
-            //     $user->crypto_balance += $withdrawal->amount;
-            // } else {
-            //     $user->balance += $withdrawal->amount;
-            // }
-            // $user->save();
+            $withdrawal->delete();
 
-            // Update withdrawal status
-            $withdrawal->update(['status' => 'rejected']);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Withdrawal rejected and amount refunded!'
-            ]);
+            return request()->wantsJson()
+                ? response()->json(['success' => true, 'message' => 'Withdrawal deleted successfully'])
+                : redirect()->route('admin.withdrawals.index')->with('success', 'Withdrawal deleted successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error rejecting withdrawal: ' . $e->getMessage()
-            ], 500);
+            Log::error('Withdrawal deletion error: ' . $e->getMessage());
+
+            return request()->wantsJson()
+                ? response()->json(['success' => false, 'message' => 'Failed to delete withdrawal'], 500)
+                : redirect()->back()->with('error', 'Failed to delete withdrawal');
         }
     }
 }

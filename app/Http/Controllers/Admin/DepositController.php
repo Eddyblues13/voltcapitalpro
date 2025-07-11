@@ -2,119 +2,64 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\User;
-use App\Models\User\Deposit;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User\Deposit;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DepositController extends Controller
 {
     public function index()
     {
         $deposits = Deposit::with('user')->latest()->get();
-        return view('admin.deposits.index', compact('deposits'));
+        return view('admin.manage_deposit', compact('deposits'));
     }
 
-    public function approve($id)
+    public function update(Request $request, Deposit $deposit)
     {
-        try {
-            $deposit = Deposit::findOrFail($id);
+        $request->validate([
+            'amount' => 'required|numeric|min:0.01',
+            'account_type' => 'required|string|max:255',
+            'status' => 'required|in:pending,approved,rejected',
+        ]);
 
-            if ($deposit->status != 'pending') {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Deposit has already been processed'
-                ], 400);
+        try {
+            $deposit->update($request->only(['amount', 'account_type', 'status']));
+
+            // If status changed to approved, update user balance
+            if ($request->status == 'approved' && $deposit->status != 'approved') {
+                $user = User::find($deposit->user_id);
+                $user->balance += $deposit->amount;
+                $user->save();
             }
 
-            $deposit->update(['status' => 'approved']);
-
-            // Credit only the trading account
-            $user = User::findOrFail($deposit->user_id);
-            $user->tradingBalance()->increment('amount', $deposit->amount);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Deposit approved and trading balance credited successfully!'
-            ]);
+            return $request->wantsJson()
+                ? response()->json(['success' => true, 'message' => 'Deposit updated successfully'])
+                : redirect()->route('admin.deposits.index')->with('success', 'Deposit updated successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error approving deposit: ' . $e->getMessage()
-            ], 500);
+            Log::error('Deposit update error: ' . $e->getMessage());
+
+            return $request->wantsJson()
+                ? response()->json(['success' => false, 'message' => 'Failed to update deposit'], 500)
+                : redirect()->back()->with('error', 'Failed to update deposit');
         }
     }
 
-
-    // public function approve($id)
-    // {
-    //     try {
-    //         $deposit = Deposit::findOrFail($id);
-
-    //         if ($deposit->status != 'pending') {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'Deposit has already been processed'
-    //             ], 400);
-    //         }
-
-    //         $deposit->update(['status' => 'approved']);
-
-    //         // Credit user's account based on account type
-    //         $user = User::findOrFail($deposit->user_id);
-
-    //         switch ($deposit->account_type) {
-    //             case 'holding':
-    //                 $user->holdingBalance()->increment('amount', $deposit->amount);
-    //                 break; 
-    //             case 'trading':
-    //                 $user->tradingBalance()->increment('amount', $deposit->amount);
-    //                 break;
-    //             case 'mining': // Note: Make sure this matches your actual account type spelling
-    //                 $user->miningBalance()->increment('amount', $deposit->amount);
-    //                 break;
-    //             case 'staking':
-    //                 $user->stakingBalance()->increment('amount', $deposit->amount);
-    //                 break;
-    //             default:
-    //                 throw new \Exception("Unknown account type: {$deposit->account_type}");
-    //         }
-
-    //         return response()->json([
-    //             'status' => 'success',
-    //             'message' => 'Deposit approved successfully!'
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Error approving deposit: ' . $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
-
-    public function reject($id)
+    public function destroy(Deposit $deposit)
     {
         try {
-            $deposit = Deposit::findOrFail($id);
+            $deposit->delete();
 
-            if ($deposit->status != 'pending') {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Deposit has already been processed'
-                ], 400);
-            }
-
-            $deposit->update(['status' => 'rejected']);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Deposit rejected successfully!'
-            ]);
+            return request()->wantsJson()
+                ? response()->json(['success' => true, 'message' => 'Deposit deleted successfully'])
+                : redirect()->route('admin.deposits.index')->with('success', 'Deposit deleted successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error rejecting deposit: ' . $e->getMessage()
-            ], 500);
+            Log::error('Deposit deletion error: ' . $e->getMessage());
+
+            return request()->wantsJson()
+                ? response()->json(['success' => false, 'message' => 'Failed to delete deposit'], 500)
+                : redirect()->back()->with('error', 'Failed to delete deposit');
         }
     }
 }
