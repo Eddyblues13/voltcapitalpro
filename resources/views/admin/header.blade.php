@@ -100,7 +100,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('Admin/Sendemail') }}" class="nav-link">
+                                <a href="{{ route('admin.send.email.form') }}" class="nav-link">
                                     <i class="link-icon icon-envelope"></i>
                                     <span class="menu-title">Send Mail</span>
                                 </a>
@@ -118,6 +118,18 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{ route('admin.identity-verifications.index') }}" class="nav-link">
+                                    <i class="link-icon icon-people"></i>
+                                    <span class="menu-title">Manage Kyc</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.trading-histories.index') }}" class="nav-link">
+                                    <i class="link-icon icon-people"></i>
+                                    <span class="menu-title">Manage Trade History</span>
+                                </a>
+                            </li>
+                            {{-- <li class="nav-item">
                                 <a href="{{ url('/Currencies') }}" class="nav-link">
                                     <i class="link-icon icon-credit-card"></i>
                                     <span class="menu-title">Currencies List</span>
@@ -134,15 +146,15 @@
                                     <i class="link-icon icon-phone"></i>
                                     <span class="menu-title">Change Phone Number</span>
                                 </a>
-                            </li>
+                            </li> --}}
                             <li class="nav-item">
-                                <a href="{{ url('Admin/changePassword') }}" class="nav-link">
+                                <a href="{{ route('admin.password.change') }}" class="nav-link">
                                     <i class="link-icon icon-key"></i>
                                     <span class="menu-title">Change password</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <form action="{{ url('Accountlogoff') }}" class="navbar-right" id="logoutForm"
+                                <form action="{{ route('admin.logout') }}" class="navbar-right" id="logoutForm"
                                     method="post">
                                     @csrf
                                     <a href="javascript:document.getElementById('logoutForm').submit()"

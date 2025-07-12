@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Models\Trade;
-use App\Models\User\Profit;
 use App\Models\Document;
 use App\Mail\sendUserEmail;
+use App\Models\User\Profit;
 use App\Models\StockHistory;
 use App\Models\TradeHistory;
 use App\Models\User\Deposit;
@@ -14,9 +14,11 @@ use Illuminate\Http\Request;
 use App\Models\AccountBalance;
 use App\Models\User\Withdrawal;
 use App\Models\User\MiningBalance;
+use App\Mail\AdminNotificationMail;
 use App\Models\User\HoldingBalance;
 use App\Models\User\StakingBalance;
 use App\Models\User\TradingBalance;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\User\ReferralBalance;
 use Illuminate\Support\Facades\Auth;
@@ -107,5 +109,93 @@ class AdminController extends Controller
             'success' => true,
             'message' => 'User deleted successfully'
         ]);
+    }
+
+
+    public function showChangePasswordForm()
+    {
+        return view('admin.change_password');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $admin = Auth::guard('admin')->user();
+
+        if (!$admin || !Hash::check($request->current_password, $admin->password)) {
+            return redirect()->back()
+                ->with('error', 'Current password is incorrect')
+                ->withInput();
+        }
+
+        try {
+            $admin->password = Hash::make($request->new_password);
+            $admin->save();
+
+            return $request->wantsJson()
+                ? response()->json(['success' => true, 'message' => 'Password updated successfully'])
+                : redirect()->back()->with('success', 'Password updated successfully');
+        } catch (\Exception $e) {
+            return $request->wantsJson()
+                ? response()->json(['success' => false, 'message' => 'Failed to update password'], 500)
+                : redirect()->back()->with('error', 'Failed to update password');
+        }
+    }
+
+
+    public function showSendEmailForm()
+    {
+        $users = User::select('id', 'name', 'email')->get();
+        return view('admin.send_mail', compact('users'));
+    }
+
+    public function sendEmail(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+        ]);
+
+        try {
+            $user = User::findOrFail($request->user_id);
+
+            Mail::to($user->email)->send(new AdminNotificationMail(
+                $request->subject,
+                $request->message
+            ));
+
+            return $request->wantsJson()
+                ? response()->json(['success' => true, 'message' => 'Email sent successfully'])
+                : redirect()->back()->with('success', 'Email sent successfully');
+        } catch (\Exception $e) {
+            Log::error('Email sending error: ' . $e->getMessage());
+
+            return $request->wantsJson()
+                ? response()->json(['success' => false, 'message' => 'Failed to send email'], 500)
+                : redirect()->back()->with('error', 'Failed to send email');
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('admin')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return $request->wantsJson()
+            ? response()->json(['success' => true, 'message' => 'Logged out successfully'])
+            : redirect('/admin/login')->with('success', 'Logged out successfully');
     }
 }

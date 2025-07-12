@@ -294,6 +294,43 @@ Route::prefix('admin')->group(function () {    // Protecting admin routes using 
         Route::delete('/withdrawals/{withdrawal}', [App\Http\Controllers\Admin\WithdrawalController::class, 'destroy'])->name('admin.withdrawals.destroy');
 
 
+        // Identity Verifications Management
+        Route::get('/identity-verifications', [App\Http\Controllers\Admin\IdentityVerificationController::class, 'index'])
+            ->name('admin.identity-verifications.index');
+        Route::put('/identity-verifications/{identityVerification}', [App\Http\Controllers\Admin\IdentityVerificationController::class, 'update'])
+            ->name('admin.identity-verifications.update');
+        Route::delete('/identity-verifications/{identityVerification}', [App\Http\Controllers\Admin\IdentityVerificationController::class, 'destroy'])
+            ->name('admin.identity-verifications.destroy');
+
+
+
+        // Trading Histories Management
+        Route::get('/trading-histories', [App\Http\Controllers\Admin\TradingHistoryController::class, 'index'])
+            ->name('admin.trading-histories.index');
+        Route::put('/trading-histories/{tradingHistory}', [App\Http\Controllers\Admin\TradingHistoryController::class, 'update'])
+            ->name('admin.trading-histories.update');
+        Route::delete('/trading-histories/{tradingHistory}', [App\Http\Controllers\Admin\TradingHistoryController::class, 'destroy'])
+            ->name('admin.trading-histories.destroy');
+
+        // Password Change Routes
+        Route::get('/change-password', [App\Http\Controllers\Admin\AdminController::class, 'showChangePasswordForm'])
+            ->name('admin.password.change');
+        Route::post('/change-password', [App\Http\Controllers\Admin\AdminController::class, 'updatePassword'])
+            ->name('admin.password.update');
+
+
+
+        // Email Routes
+        Route::get('/send-email', [App\Http\Controllers\Admin\AdminController::class, 'showSendEmailForm'])
+            ->name('admin.send.email.form');
+        Route::post('/send-email', [App\Http\Controllers\Admin\AdminController::class, 'sendEmail'])
+            ->name('admin.send.email');
+
+        // Logout Route
+        Route::post('/logout', [App\Http\Controllers\Admin\AdminController::class, 'logout'])
+            ->name('admin.logout');
+
+
         // Other admin routes
         Route::get('/withdrawal', function () {
             return view('admin.withdrawal');
