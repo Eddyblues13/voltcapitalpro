@@ -3,14 +3,14 @@
 </div>
 
 <!-- JavaScript Libraries -->
-<script src="{{ asset('Account/vendors/js/vendor.bundle.base.js') }}"></script>
-<script src="{{ asset('Account/vendors/js/vendor.bundle.addons.js') }}"></script>
+<script src="{{ asset('account/vendors/js/vendor.bundle.base.js') }}"></script>
+<script src="{{ asset('account/vendors/js/vendor.bundle.addons.js') }}"></script>
 <script src="{{ asset('Account/js/dashboard.js') }}"></script>
 <script src="{{ asset('Account/js/template.js') }}"></script>
 <script src="{{ asset('Account/js/data-table.js') }}"></script>
-<script src="{{ asset('Account/vendors/tinymce/tinymce.min.js') }}"></script>
-<script src="{{ asset('Account/vendors/tinymce/themes/modern/theme.js') }}"></script>
-<script src="{{ asset('Account/vendors/summernote/dist/summernote-bs4.min.js') }}"></script>
+<script src="{{ asset('account/vendors/tinymce/tinymce.min.js') }}"></script>
+<script src="{{ asset('account/vendors/tinymce/themes/modern/theme.js') }}"></script>
+<script src="{{ asset('account/vendors/summernote/dist/summernote-bs4.min.js') }}"></script>
 <script src="{{ asset('Account/js/editorDemo.js') }}"></script>
 <script src="{{ asset('asset2/js/sweetalert.js') }}"></script>
 <script src="{{ asset('JavaScript.js') }}"></script>

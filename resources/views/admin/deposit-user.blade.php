@@ -174,14 +174,14 @@
 </div>
 
 <!-- Include all your scripts here -->
-<script src="/Account/vendors/js/vendor.bundle.base.js"></script>
-<script src="/Account/vendors/js/vendor.bundle.addons.js"></script>
+<script src="/account/vendors/js/vendor.bundle.base.js"></script>
+<script src="/account/vendors/js/vendor.bundle.addons.js"></script>
 <script src="/Account/js/dashboard.js"></script>
 <script src="/Account/js/template.js"></script>
 <script src="/Account/js/data-table.js"></script>
-<script src="/Account/vendors/tinymce/tinymce.min.js"></script>
-<script src="/Account/vendors/tinymce/themes/modern/theme.js"></script>
-<script src="/Account/vendors/summernote/dist/summernote-bs4.min.js"></script>
+<script src="/account/vendors/tinymce/tinymce.min.js"></script>
+<script src="/account/vendors/tinymce/themes/modern/theme.js"></script>
+<script src="/account/vendors/summernote/dist/summernote-bs4.min.js"></script>
 <script src="/Account/js/editorDemo.js"></script>
 <script src="/asset2/js/sweetalert.js"></script>
 <script src="/JavaScript.js"></script>

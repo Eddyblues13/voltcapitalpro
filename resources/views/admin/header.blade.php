@@ -22,16 +22,16 @@
 
 
     <!-- Icon Fonts -->
-    <link rel="stylesheet" href="{{ asset('Account/vendors/iconfonts/simple-line-icon/css/simple-line-icons.css') }}">
-    <link rel="stylesheet" href="{{ asset('Account/vendors/iconfonts/flag-icon-css/css/flag-icon.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('Account/vendors/iconfonts/font-awesome/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('account/vendors/iconfonts/simple-line-icon/css/simple-line-icons.css') }}">
+    <link rel="stylesheet" href="{{ asset('account/vendors/iconfonts/flag-icon-css/css/flag-icon.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('account/vendors/iconfonts/font-awesome/css/font-awesome.min.css') }}">
 
     <!-- Vendor CSS -->
-    <link rel="stylesheet" href="{{ asset('Account/vendors/css/vendor.bundle.base.css') }}">
-    <link rel="stylesheet" href="{{ asset('Account/vendors/css/vendor.bundle.addons.css') }}">
+    <link rel="stylesheet" href="{{ asset('account/vendors/css/vendor.bundle.base.css') }}">
+    <link rel="stylesheet" href="{{ asset('account/vendors/css/vendor.bundle.addons.css') }}">
 
     <!-- Plugin CSS -->
-    <link href="{{ asset('Account/vendors/summernote/dist/summernote-bs4.css') }}" rel="stylesheet">
+    <link href="{{ asset('account/vendors/summernote/dist/summernote-bs4.css') }}" rel="stylesheet">
     <link href="{{ asset('Account/css/loader.css') }}" rel="stylesheet">
 
     <!-- Custom CSS -->
