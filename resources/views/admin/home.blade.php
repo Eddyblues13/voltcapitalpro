@@ -48,7 +48,7 @@
                             <td>{{ $user->phone_number }}</td>
                             <td>{{ $user->created_at->format('M d, Y') }}</td>
                             <td>
-                                <a href="{{ url('Admin/Details/'.$user->id) }}" class="btn btn-outline-primary">
+                                <a href="{{ url('admin/Details/'.$user->id) }}" class="btn btn-outline-primary">
                                     <i class="icon-eye"></i> View
                                 </a>
                                 <a onclick="PaidCF('{{ url('Admin/PaidCF/'.$user->id) }}')"
