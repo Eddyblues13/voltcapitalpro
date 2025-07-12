@@ -6,7 +6,7 @@
             <h1>Dashboard</h1>
             <h2>Admin</h2>
             <p>
-                <a href="{{ url('Admin/Dashboard') }}" class="btn btn-outline-primary">
+                <a href="{{ url('admin/home') }}" class="btn btn-outline-primary">
                     <i class="icon-user-follow text-secondary"></i>Refresh
                 </a>
             </p>
