@@ -32,7 +32,7 @@
 
     <!-- Plugin CSS -->
     <link href="{{ asset('account/vendors/summernote/dist/summernote-bs4.css') }}" rel="stylesheet">
-    <link href="{{ asset('Account/css/loader.css') }}" rel="stylesheet">
+    <link href="{{ asset('account/css/loader.css') }}" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('asset2/css/sweetalert.css') }}" type="text/css">

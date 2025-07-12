@@ -30,7 +30,7 @@ class UserController extends Controller
             ->where('status', 'approved') // Only include approved deposits
             ->sum('amount') ?? 0;
         $data['profit'] = Profit::where('user_id', $user->id)->sum('amount') ?? 0;
-  
+
         $data['totalBalance'] =
             $data['holdingBalance'] +
             $data['stakingBalance'] +
@@ -119,7 +119,7 @@ class UserController extends Controller
         $user = Auth::user();
 
 
-        $tradingBalance = MiningBalance::where('user_id', $user->id)->sum('amount') ?? 0;
+        $miningBalance = MiningBalance::where('user_id', $user->id)->sum('amount') ?? 0;
 
 
 
