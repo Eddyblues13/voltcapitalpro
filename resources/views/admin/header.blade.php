@@ -36,7 +36,7 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('asset2/css/sweetalert.css') }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('Account/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('account/css/style.css') }}">
 
     <!-- Toast Notification -->
     <link rel="stylesheet" href="{{ asset('_content/AspNetCoreHero.ToastNotification/notyf.min.css') }}">
