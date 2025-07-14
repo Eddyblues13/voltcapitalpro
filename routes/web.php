@@ -330,7 +330,7 @@ Route::prefix('admin')->group(function () {    // Protecting admin routes using 
             ->name('admin.send.email.form');
         Route::post('/send-email', [App\Http\Controllers\Admin\AdminController::class, 'sendEmail'])
             ->name('admin.send.email');
-
+          
         // Logout Route
         Route::post('/logout', [App\Http\Controllers\Admin\AdminController::class, 'logout'])
             ->name('admin.logout');
