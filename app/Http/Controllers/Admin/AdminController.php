@@ -197,9 +197,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            $user = User::findOrFail($request->user_id);
-
-            Mail::to($user->email)->send(new AdminNotificationMail(
+            Mail::to($request->email)->send(new AdminNotificationMail(
                 $request->subject,
                 $request->message
             ));
