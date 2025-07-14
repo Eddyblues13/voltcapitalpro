@@ -346,9 +346,7 @@ Route::prefix('admin')->group(function () {    // Protecting admin routes using 
         Route::get('/Traders', function () {
             return view('admin.traders');
         })->name('admin.traders');
-        Route::get('/Sendemail', function () {
-            return view('admin.send-email');
-        })->name('admin.send.email');
+
         Route::get('/PaymentMethod', function () {
             return view('admin.payment-method');
         })->name('admin.payment.method');
