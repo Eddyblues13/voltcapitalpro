@@ -30,13 +30,9 @@
                             <form id="sendEmailForm" action="{{ route('admin.send.email') }}" method="POST">
                                 @csrf
                                 <div class="form-group">
-                                    <label for="user_id">Select User</label>
-                                    <select class="form-control" id="user_id" name="user_id" required>
-                                        <option value="">-- Select User --</option>
-                                        @foreach($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                                        @endforeach
-                                    </select>
+                                    <label for="email">Enter User Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" required
+                                        placeholder="example@domain.com">
                                 </div>
                                 <div class="form-group">
                                     <label for="subject">Subject</label>
