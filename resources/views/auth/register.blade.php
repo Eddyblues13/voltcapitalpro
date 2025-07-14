@@ -167,7 +167,7 @@
             <span class="gradient-step">step by step.</span>
         </h2>
         <div class="footer-bottom">
-            <div class="copyright">Copyright © 2024 by Volt Capital Pro</div>
+            <div class="copyright">Copyright © 2019 by Volt Capital Pro</div>
             <a href="#" class="terms">Terms and Conditions</a>
         </div>
     </div>

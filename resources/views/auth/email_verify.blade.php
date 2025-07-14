@@ -133,21 +133,22 @@
                             </button>
                         </form>
 
-                        <form action="{{ route('skip.code') }}" method="POST" style="display: inline;">
+                        {{-- <form action="{{ route('skip.code') }}" method="POST" style="display: inline;">
                             @csrf
                             <button type="submit" class="btn skip-style btn-outline text-uppercase">
                                 Skip
                             </button>
-                        </form>
+                        </form> --}}
                         <p class="info-text">
                             An email containing your PIN has been sent to your email. If you have not received it in
-                            a minute or two, use the resend form.
+                            a minute or two, contact support.
                         </p>
 
                     </div>
                 </div>
             </div>
 
+            {{--
             <!-- Resend Pin Card -->
             <div class="col-md-6 col-lg-5">
                 <div class="card p-4">
@@ -168,7 +169,7 @@
                         </form>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 

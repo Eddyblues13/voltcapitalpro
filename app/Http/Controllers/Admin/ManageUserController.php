@@ -26,6 +26,12 @@ class ManageUserController extends Controller
         return view('admin.deposit-user', ['userId' => $userId]);
     }
 
+
+    public function profit($userId)
+    {
+        return view('admin.add-profit', ['userId' => $userId]);
+    }
+
     public function upgrade(User $user)
     {
         return view('admin.upgrade', compact('user'));

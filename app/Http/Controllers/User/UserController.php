@@ -31,6 +31,8 @@ class UserController extends Controller
             ->sum('amount') ?? 0;
         $data['profit'] = Profit::where('user_id', $user->id)->sum('amount') ?? 0;
 
+        $data['accountBalance'] =   $data['depositBalance'] + $data['profit'];
+
         $data['totalBalance'] =
             $data['holdingBalance'] +
             $data['stakingBalance'] +

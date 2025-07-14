@@ -190,6 +190,62 @@ class BalanceController extends Controller
         return redirect()->back()->with('success', 'Trading balance updated successfully.');
     }
 
+
+    public function createDeposit(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'amount' => 'required|numeric|min:0',
+            'account_type' => 'required|in:holding,mining,referral,profit,staking'
+        ]);
+
+        // Find existing deposit or create a new one
+        $deposit = \App\Models\User\Deposit::firstOrCreate(
+            [
+                'user_id' => $request->user_id,
+                'account_type' => $request->account_type,
+                'status' => 'approved',
+            ],
+            [
+                'amount' => 0, // Initial amount if new deposit is created
+            ]
+        );
+
+        // Increment the amount
+        $deposit->increment('amount', $request->amount);
+
+        return redirect()->back()->with('success', 'Deposit created or updated successfully.');
+    }
+
+
+
+
+    public function createProfit(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'amount' => 'required|numeric|min:0',
+            'type' => 'required|in:profit,loss'
+        ]);
+
+
+
+        // Get or create profit balance
+        $profitBalance = \App\Models\User\Profit::firstOrCreate(
+            ['user_id' => $request->user_id],
+            ['amount' => 0]
+        );
+
+        // Adjust balance
+        $request->type === 'profit'
+            ? $profitBalance->increment('amount', $request->amount)
+            : $profitBalance->decrement('amount', $request->amount);
+
+        return redirect()->back()->with('success', 'Profit recorded successfully.');
+    }
+
+
+
     // Send transaction email
     protected function sendTransactionEmail($userId, $transactionType, $amount, $transactionCategory)
     {

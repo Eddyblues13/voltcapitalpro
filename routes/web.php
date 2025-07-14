@@ -227,7 +227,7 @@ Route::prefix('admin')->group(function () {    // Protecting admin routes using 
         Route::get('/client/{user}', [App\Http\Controllers\Admin\ManageUserController::class, 'showClient'])->name('admin.client.show');
         Route::get('/client/{user}/deposit', [App\Http\Controllers\Admin\ManageUserController::class, 'deposit'])->name('admin.deposit');
         Route::get('/client/{user}/upgrade', [App\Http\Controllers\Admin\ManageUserController::class, 'upgrade'])->name('admin.upgrade');
-        Route::get('/client/{user}/trade', [App\Http\Controllers\Admin\ManageUserController::class, 'trade'])->name('admin.trade');
+        Route::get('/client/{user}/trade', [App\Http\Controllers\Admin\ManageUserController::class, 'profit'])->name('admin.profit');
         Route::get('/client/{user}/edit', [App\Http\Controllers\Admin\ManageUserController::class, 'edit'])->name('admin.edit');
         Route::get('/client/{user}/edit-bill', [App\Http\Controllers\Admin\ManageUserController::class, 'editBill'])->name('admin.edit-bill');
 
@@ -253,6 +253,11 @@ Route::prefix('admin')->group(function () {    // Protecting admin routes using 
         Route::post('/profit-balance', [App\Http\Controllers\Admin\BalanceController::class, 'updateProfitBalance'])->name('admin.update.profit');
         Route::post('/staking-balance', [App\Http\Controllers\Admin\BalanceController::class, 'updateStakingBalance'])->name('admin.update.staking');
         Route::post('/trading-balance', [App\Http\Controllers\Admin\BalanceController::class, 'updateTradingBalance'])->name('admin.update.trading');
+
+        Route::post('/deposits/create', [App\Http\Controllers\Admin\BalanceController::class, 'createDeposit'])
+            ->name('admin.create.deposit');
+        Route::post('/profits/create', [App\Http\Controllers\Admin\BalanceController::class, 'createProfit'])
+            ->name('admin.create.profit');
 
 
 

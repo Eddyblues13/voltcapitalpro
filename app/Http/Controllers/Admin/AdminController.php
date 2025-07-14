@@ -12,6 +12,7 @@ use App\Models\TradeHistory;
 use App\Models\User\Deposit;
 use Illuminate\Http\Request;
 use App\Models\AccountBalance;
+use App\Mail\VerificationEmail;
 use App\Models\User\Withdrawal;
 use App\Models\User\MiningBalance;
 use App\Mail\AdminNotificationMail;
@@ -40,24 +41,52 @@ class AdminController extends Controller
 
     public function show($id)
     {
-        $user = User::with(['holdingBalance', 'stakingBalance', 'tradingBalance', 'referralBalance'])
-            ->findOrFail($id);
+        $user = User::find($id); // or User::where('id', $id)->first();
 
-        return view('admin.user-details', compact('user'));
+
+        $depositBalance = Deposit::where('user_id', $user->id)->sum('amount') ?? 0;
+        $profit = Profit::where('user_id', $user->id)->sum('amount') ?? 0;
+
+        $accountBalance = $depositBalance + $profit;
+
+        return view('admin.user-details', compact('user', 'depositBalance', 'profit', 'accountBalance'));
     }
+
 
     public function verifyUser($id)
     {
         $user = User::findOrFail($id);
-        $user->update([
-            'email_verification' => true,
-            'id_verification' => true,
-            'address_verification' => true
-        ]);
+
+        // Generate a verification code
+        $verificationCode = rand(1000, 9999);
+
+        // Optionally save the code (e.g., to a table or user model column)
+        $user->verification_code = $verificationCode;
+        $user->verification_expiry = now()->addMinutes(10);
+        $user->save();
+
+        // Prepare full name
+        $full_name = $user->first_name . ' ' . $user->last_name;
+
+        // Compose message body
+        $vmessage = "
+        <p style='line-height: 24px;margin-bottom:15px;'>Hello $full_name,</p>
+        <br>
+        <p>We are so happy to have you on board, and thank you for joining us.</p>
+        <p>We just need to verify your email address before you can access Cytopia Capital.</p>
+        <br>
+        <p>Use this code to verify your email: <strong>$verificationCode</strong></p>
+        <p style='color: red;'>Please note that this code will expire in 10 minutes.</p>
+        <br>
+        <p>Don't hesitate to get in touch if you have any questions; we'll always get back to you.</p>
+    ";
+
+        // Send the verification email
+        Mail::to($user->email)->send(new VerificationEmail($vmessage));
 
         return response()->json([
             'success' => true,
-            'message' => 'User verified successfully'
+            'message' => 'Verification email sent successfully.'
         ]);
     }
 

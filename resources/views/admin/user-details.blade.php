@@ -23,29 +23,15 @@
                             </dt>
 
                             <dt>
-                                Holding Balance : {{ number_format($user->holdingBalance->amount ?? 0, 2) }}
+                                Profit : {{ number_format($profit->amount ?? 0, 2) }}
                             </dt>
 
 
                             <dt>
-                                Trading Balance : {{ number_format($user->tradingBalance->amount ?? 0, 2) }}
+                                Deposit : {{ number_format($depositBalance->amount ?? 0, 2) }}
                             </dt>
 
-                            <dt>
-                                Staking Balance : {{ number_format($user->stakingBalance->amount ?? 0, 2) }}
-                            </dt>
 
-                            <dt>
-                                Mining Balance : {{ number_format($user->miningBalance->amount ?? 0, 2) }}
-                            </dt>
-
-                            <dt>
-                                Account Profit : {{ number_format($user->profitBalance->amount ?? 0, 2) }}
-                            </dt>
-
-                            <dt>
-                                Referral Bonus : {{ number_format($user->referralBalance->amount ?? 0, 2) }}
-                            </dt>
 
                             <dt>
                                 Email : {{ $user->email }}
@@ -77,9 +63,9 @@
                 <a href="/Admin/Dashboard">Back to List</a>|
                 <a href="{{ route('admin.deposit', $user->id) }}" class="btn btn-outline-primary"><i
                         class="fa fa-level-down "></i>Deposite</a>|
-                <a href="{{ route('admin.upgrade', $user->id) }}" class="btn btn-outline-primary"><i
+                <a href="{{ route('admin.profit', $user->id) }}" class="btn btn-outline-primary"><i
                         class="fa fa-level-up "></i>Upgrade</a>|
-                <a href="{{ route('admin.trade', $user->id) }}" class="btn btn-outline-primary"><i
+                <a href="{{ route('admin.profit', $user->id) }}" class="btn btn-outline-primary"><i
                         class="fa fa-bar-chart-o "></i>Trade</a>|
 
                 <a href="{{ route('admin.edit', $user->id) }}" class="btn btn-outline-primary"><i

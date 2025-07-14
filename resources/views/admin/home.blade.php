@@ -37,8 +37,7 @@
                                 </span>
                             </td>
                             <td>
-                                @if($user->email_verification && $user->id_verification &&
-                                $user->address_verification)
+                                @if($user->email_verification)
                                 <span class="badge badge-success">Verified</span>
                                 @else
                                 <span class="badge badge-warning">Pending</span>
@@ -59,7 +58,7 @@
                                     class="btn btn-outline-dark">
                                     <i class="icon-lock"></i> De-Activate
                                 </a>
-                                <a onclick="Verify('{{ url('Admin/Verify/'.$user->id) }}')"
+                                <a onclick="Verify('{{ route('admin.verify.user', $user->id) }}')"
                                     class="btn btn-outline-success">
                                     <i class="icon-note"></i> Verify
                                 </a>

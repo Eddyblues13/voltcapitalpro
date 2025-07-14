@@ -3,37 +3,36 @@
 <div class="container-fluid page-body-wrapper">
     <div class="main-panel">
         <div class="content-wrapper">
-            <h1>Create Deposit for User #{{ $userId }}</h1>
+            <h6>Profit/Loss Management for User #{{ $userId }}</h6>
 
             <div class="row">
                 <div class="col-md-6 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Deposit Form</h4>
-                            <form method="post" action="{{ route('admin.create.deposit') }}">
+                            <h4 class="card-title">Profit/Loss Form</h4>
+                            <form method="post" action="{{ route('admin.create.profit') }}">
                                 @csrf
                                 <input type="hidden" name="user_id" value="{{ $userId }}">
 
-                                <div class="form-group">
-                                    <label>Amount</label>
-                                    <input type="number" class="form-control" name="amount" required step="0.01" min="0"
-                                        placeholder="Enter deposit amount">
-                                </div>
+
 
                                 <div class="form-group">
-                                    <label>Account Type</label>
-                                    <select class="form-control" name="account_type" required>
-                                        <option value="holding">Holding Balance</option>
-                                        <option value="mining">Mining Balance</option>
-                                        <option value="referral">Referral Balance</option>
-                                        <option value="profit">Profit Balance</option>
-                                        <option value="staking">Staking Balance</option>
+                                    <label>Amount</label>
+                                    <input type="number" class="form-control" name="amount" required step="any" min="0"
+                                        placeholder="Enter amount">
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label>Transaction Type</label>
+                                    <select class="form-control" name="type" required>
+                                        <option value="profit">Profit</option>
+                                        <option value="loss">Loss</option>
                                     </select>
                                 </div>
 
-                                <input type="hidden" name="status" value="approved">
 
-                                <button type="submit" class="btn btn-primary mr-2">Create Deposit</button>
+                                <button type="submit" class="btn btn-primary mr-2">Submit</button>
                                 <a href="{{ url()->previous() }}" class="btn btn-light">Cancel</a>
                             </form>
                         </div>

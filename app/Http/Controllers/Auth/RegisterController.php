@@ -160,34 +160,34 @@ class RegisterController extends Controller
             );
         }
 
-        // Prepare and send verification email
-        $full_name = $request->first_name . ' ' . $request->last_name;
-        $vmessage = "
-        <p style='line-height: 24px;margin-bottom:15px;'>
-            Hello $full_name,
-        </p>
-        <br>
-        <p>
-        We are so happy to have you on board, and thank you for joining us.
-        </p>
-        <p>
-        We just need to verify your email address before you can access cytopiacapital.
-        </p>
-        <br>
-        <p>
-        Use this code to verify your email: <strong>$verificationCode</strong>
-        </p>
-        <p style='color: red;'>
-        Please note that this code will expire in 10 minutes.
-        </p>
-        <br>
-        <p>
-        Don't hesitate to get in touch if you have any questions; we'll always get back to you.
-        </p>
-        ";
+        // // Prepare and send verification email
+        // $full_name = $request->first_name . ' ' . $request->last_name;
+        // $vmessage = "
+        // <p style='line-height: 24px;margin-bottom:15px;'>
+        //     Hello $full_name,
+        // </p>
+        // <br>
+        // <p>
+        // We are so happy to have you on board, and thank you for joining us.
+        // </p>
+        // <p>
+        // We just need to verify your email address before you can access cytopiacapital.
+        // </p>
+        // <br>
+        // <p>
+        // Use this code to verify your email: <strong>$verificationCode</strong>
+        // </p>
+        // <p style='color: red;'>
+        // Please note that this code will expire in 10 minutes.
+        // </p>
+        // <br>
+        // <p>
+        // Don't hesitate to get in touch if you have any questions; we'll always get back to you.
+        // </p>
+        // ";
 
-        // Send the email
-        Mail::to($user->email)->send(new VerificationEmail($vmessage));
+        // // Send the email
+        // Mail::to($user->email)->send(new VerificationEmail($vmessage));
 
         // Prepare and send admin notification email with user details
         $adminMessage = "
