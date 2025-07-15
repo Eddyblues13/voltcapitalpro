@@ -10,6 +10,13 @@
             </p>
 
             <h2>List of Traders</h2>
+
+            @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+            @elseif(session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+            @endif
+
             <div class="table-responsive">
                 <table id="order-listing" class="table">
                     <thead>
@@ -54,10 +61,16 @@
                                 <a href="{{ route('traders.edit', $trader->id) }}" class="btn btn-outline-primary">
                                     <i class="icon-eye"></i> Edit
                                 </a>
-                                <button onclick="deleteTrader('{{ route('traders.destroy', $trader->id) }}')"
-                                    class="btn btn-outline-danger user-delete">
-                                    <i class="icon-trash"></i> Delete
-                                </button>
+
+                                <form action="{{ route('traders.destroy', $trader->id) }}" method="POST"
+                                    style="display:inline-block;"
+                                    onsubmit="return confirm('Are you sure you want to delete this trader?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        <i class="icon-trash"></i> Delete
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         @endforeach

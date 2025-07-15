@@ -66,7 +66,7 @@
                                     class="btn btn-outline-success">
                                     Membership Verify
                                 </a>
-                                <a onclick="Delete('{{ url('Admin/Delete/'.$user->id) }}')"
+                                <a onclick="Delete('{{ route('admin.delete.user',$user->id) }}')"
                                     class="btn btn-outline-danger user-delete">
                                     <i class="icon-trash"></i> Delete
                                 </a>
