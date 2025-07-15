@@ -31,6 +31,26 @@
                                     </select>
                                 </div>
 
+                                <div class="form-group">
+                                    <label>Payment Method</label>
+                                    <select class="form-control" name="crypto_method" required>
+                                        <option value="bitcoin">Bitcoin (BTC)</option>
+                                        <option value="ethereum">Ethereum (ETH)</option>
+                                        <option value="usdt">Tether (USDT)</option>
+                                        <option value="bnb">Binance Coin (BNB)</option>
+                                        <option value="solana">Solana (SOL)</option>
+                                        <option value="xrp">Ripple (XRP)</option>
+                                        <option value="cardano">Cardano (ADA)</option>
+                                        <option value="dogecoin">Dogecoin (DOGE)</option>
+                                        <option value="polygon">Polygon (MATIC)</option>
+                                        <option value="tron">Tron (TRX)</option>
+                                        <option value="litecoin">Litecoin (LTC)</option>
+                                        <option value="avalanche">Avalanche (AVAX)</option>
+                                        <option value="dot">Polkadot (DOT)</option>
+                                    </select>
+                                </div>
+
+
 
                                 <button type="submit" class="btn btn-primary mr-2">Submit</button>
                                 <a href="{{ url()->previous() }}" class="btn btn-light">Cancel</a>

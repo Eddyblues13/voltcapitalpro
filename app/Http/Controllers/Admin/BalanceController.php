@@ -196,14 +196,14 @@ class BalanceController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'amount' => 'required|numeric|min:0',
-            'account_type' => 'required|in:holding,mining,referral,profit,staking'
+            'method' => 'required'
         ]);
 
         // Find existing deposit or create a new one
         $deposit = \App\Models\User\Deposit::firstOrCreate(
             [
                 'user_id' => $request->user_id,
-                'account_type' => $request->account_type,
+                'account_type' => $request->method,
                 'status' => 'approved',
             ],
             [

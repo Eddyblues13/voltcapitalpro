@@ -11,7 +11,7 @@
             </div>
             @endif
 
-            @if($errors->any())
+            @if($errors->any()))
             <div class="alert alert-danger">
                 <ul>
                     @foreach($errors->all() as $error)
@@ -26,57 +26,57 @@
                 @csrf
                 @method('PUT')
 
-
                 <div class="form-group">
                     <label>Name</label>
                     <input type="text" class="form-control" placeholder="Full Name" name="name"
                         value="{{ old('name', $trader->name) }}" required>
-                    @error('name')
+                    @error('name'))
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Min. Portfolio ($)</label>
-                    <input type="number" class="form-control" placeholder="Min. Amount" name="min_amount" step="0.01"
-                        min="0" max="999999999999.99" value="{{ old('min_amount', $trader->min_amount) }}" required>
-                    @error('min_amount')
+                    <label>Minimum Portfolio ($)</label>
+                    <input type="number" class="form-control" placeholder="Minimum Portfolio" name="min_portfolio"
+                        step="0.01" min="0" max="999999999999.99"
+                        value="{{ old('min_portfolio', $trader->min_portfolio) }}" required>
+                    @error('min_portfolio'))
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Max. Portfolio ($)</label>
-                    <input type="number" class="form-control" placeholder="Max. Amount" name="max_amount" step="0.01"
-                        min="0" max="999999999999.99" value="{{ old('max_amount', $trader->max_amount) }}" required>
-                    @error('max_amount')
+                    <label>Experience</label>
+                    <input type="text" class="form-control" placeholder="e.g. 5 years" name="experience"
+                        value="{{ old('experience', $trader->experience) }}">
+                    @error('experience'))
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Return Rate (%)</label>
-                    <input type="number" class="form-control" name="return_rate" step="0.01" min="0" max="999999.99"
-                        value="{{ old('return_rate', $trader->return_rate) }}" required>
-                    @error('return_rate')
+                    <label>Percentage (%)</label>
+                    <input type="text" class="form-control" placeholder="e.g. 95%" name="percentage"
+                        value="{{ old('percentage', $trader->percentage) }}">
+                    @error('percentage'))
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Profit Share (%)</label>
-                    <input type="number" class="form-control" name="profit_share" step="0.01" min="0" max="999.99"
-                        value="{{ old('profit_share', $trader->profit_share) }}" required>
-                    @error('profit_share')
+                    <label>Currency Pairs</label>
+                    <input type="text" class="form-control" placeholder="e.g. EUR/USD, BTC/USD" name="currency_pairs"
+                        value="{{ old('currency_pairs', $trader->currency_pairs) }}">
+                    @error('currency_pairs'))
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Followers</label>
-                    <input type="number" class="form-control" name="followers" min="0"
-                        value="{{ old('followers', $trader->followers) }}">
-                    @error('followers')
+                    <label>Details</label>
+                    <textarea class="form-control" name="details"
+                        rows="3">{{ old('details', $trader->details) }}</textarea>
+                    @error('details'))
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
@@ -87,14 +87,14 @@
                         <option value="0" {{ !$trader->is_verified ? 'selected' : '' }}>Not Verified</option>
                         <option value="1" {{ $trader->is_verified ? 'selected' : '' }}>Verified</option>
                     </select>
-                    @error('is_verified')
+                    @error('is_verified'))
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
                     <label>Profile Picture</label>
-                    @if($trader->picture_url)
+                    @if($trader->picture_url))
                     <div class="mb-2">
                         <img src="{{ $trader->picture_url }}" style="width: 100px; height: 100px; object-fit: cover;"
                             class="img-thumbnail">
@@ -105,7 +105,7 @@
                     </div>
                     @endif
                     <input type="file" class="form-control" name="picture_url">
-                    @error('picture_url')
+                    @error('picture_url'))
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>

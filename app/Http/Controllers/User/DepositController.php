@@ -209,11 +209,11 @@ class DepositController extends Controller
         $crypto = $request->query('crypto');
         $amount = $request->query('amount');
 
-        // Fetch wallet details from database based on cryptocurrency type
-        $wallet = \App\Models\WalletOption::where('coin_code', $crypto)->first();
+        // Fetch payment method details from database based on cryptocurrency name
+        $paymentMethod = \App\Models\PaymentMethod::where('name', $crypto)->first();
 
-        if (!$wallet) {
-            return redirect()->back()->with('error', 'Wallet for this cryptocurrency is not available');
+        if (!$paymentMethod) {
+            return redirect()->back()->with('error', 'Payment method for this cryptocurrency is not available');
         }
 
         // Pass all data to the view
@@ -221,10 +221,11 @@ class DepositController extends Controller
             'txn_id' => $txn_id,
             'crypto' => $crypto,
             'crypto_amount' => $amount,
-            'wallet_address' => $wallet->wallet_address,
+            'wallet_address' => $paymentMethod->wallet_address,
             'payment_method' => $crypto,
-            'coin_name' => $wallet->coin_name,
-            'network_type' => $wallet->network_type
+            'coin_name' => $paymentMethod->name,
+            'coin_image' => $paymentMethod->coin_pic_path, // Added coin image
+            'scan_code' => $paymentMethod->scan_code_path // Added scan code if needed
         ]);
     }
 }

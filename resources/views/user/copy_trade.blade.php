@@ -19,6 +19,7 @@
 
 
     <!-- Trader Cards Container -->
+    <!-- Trader Cards Container -->
     <div id="tradersContainer">
         @foreach($traders as $trader)
         <div class="row mb-3 trader-card-wrapper">
@@ -30,7 +31,8 @@
                             <img src="{{ asset($trader->picture_url) }}" alt="{{ $trader->name }}"
                                 class="profile-image mb-3 rounded-circle" width="100">
                             <button class="btn btn-primary copy-button w-100 py-2" data-trader-id="{{ $trader->id }}"
-                                data-min-amount="{{ $trader->min_amount }}" data-trader-name="{{ $trader->name }}">
+                                data-min-portfolio="{{ $trader->min_portfolio }}"
+                                data-trader-name="{{ $trader->name }}">
                                 COPY TRADE
                             </button>
                         </div>
@@ -56,23 +58,25 @@
 
                                 <div class="row stats-row">
                                     <div class="col-md-4 stat-item">
-                                        <div class="stat-value text-success">{{ $trader->return_rate }}%</div>
-                                        <div class="stat-label">Avg. Return</div>
+                                        <div class="stat-value text-success">{{ $trader->percentage ?? 'N/A' }}</div>
+                                        <div class="stat-label">Success Rate</div>
                                     </div>
                                     <div class="col-md-4 stat-item">
-                                        <div class="stat-value text-info">{{ number_format($trader->followers) }}</div>
-                                        <div class="stat-label">Followers</div>
+                                        <div class="stat-value text-info">{{ $trader->experience ?? 'N/A' }}</div>
+                                        <div class="stat-label">Experience</div>
                                     </div>
                                     <div class="col-md-4 stat-item">
-                                        <div class="stat-value text-warning">{{ $trader->profit_share }}%</div>
-                                        <div class="stat-label">Profit Share</div>
+                                        <div class="stat-value text-warning">${{ number_format($trader->min_portfolio)
+                                            }}</div>
+                                        <div class="stat-label">Min Portfolio</div>
                                     </div>
                                 </div>
 
-                                {{-- <div class="mt-3">
-                                    <small class="text-muted">Min. Investment: ${{ number_format($trader->min_amount, 2)
-                                        }}</small>
-                                </div> --}}
+                                @if($trader->currency_pairs)
+                                <div class="mt-3">
+                                    <small class="text-muted">Specializes in: {{ $trader->currency_pairs }}</small>
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>

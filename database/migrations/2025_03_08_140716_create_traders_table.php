@@ -15,14 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('picture_url')->nullable();
             $table->string('picture_public_id')->nullable();
-            $table->boolean('is_verified')->default(false);
+            $table->boolean('is_verified')->default(true);
             $table->string('verified_badge')->nullable();
             $table->string('name');
-            $table->decimal('return_rate', 8, 2)->default(0.00);
-            $table->decimal('min_amount', 15, 2);
-            $table->decimal('max_amount', 15, 2);
-            $table->integer('followers')->default(0);
-            $table->decimal('profit_share', 5, 2)->default(0.00);
+            $table->decimal('min_portfolio', 15, 2);
+            $table->string('experience')->nullable();
+            $table->string('percentage')->nullable();
+            $table->string('currency_pairs')->nullable();
+            $table->string('details')->nullable();
             $table->timestamps();
         });
     }

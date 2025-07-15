@@ -20,16 +20,30 @@
                                         placeholder="Enter deposit amount">
                                 </div>
 
+
+
                                 <div class="form-group">
-                                    <label>Account Type</label>
-                                    <select class="form-control" name="account_type" required>
-                                        <option value="holding">Holding Balance</option>
-                                        <option value="mining">Mining Balance</option>
-                                        <option value="referral">Referral Balance</option>
-                                        <option value="profit">Profit Balance</option>
-                                        <option value="staking">Staking Balance</option>
+                                    <label>Payment Method</label>
+                                    <select class="form-control" name="method" required>
+                                        <option value="bitcoin">Bitcoin (BTC)</option>
+                                        <option value="ethereum">Ethereum (ETH)</option>
+                                        <option value="usdt">Tether (USDT)</option>
+                                        <option value="bnb">Binance Coin (BNB)</option>
+                                        <option value="solana">Solana (SOL)</option>
+                                        <option value="xrp">Ripple (XRP)</option>
+                                        <option value="cardano">Cardano (ADA)</option>
+                                        <option value="dogecoin">Dogecoin (DOGE)</option>
+                                        <option value="polygon">Polygon (MATIC)</option>
+                                        <option value="tron">Tron (TRX)</option>
+                                        <option value="litecoin">Litecoin (LTC)</option>
+                                        <option value="avalanche">Avalanche (AVAX)</option>
+                                        <option value="dot">Polkadot (DOT)</option>
                                     </select>
                                 </div>
+
+
+
+
 
                                 <input type="hidden" name="status" value="approved">
 

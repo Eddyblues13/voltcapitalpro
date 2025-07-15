@@ -16,10 +16,10 @@
                         <tr>
                             <th>Name</th>
                             <th>Profile Pic</th>
-                            <th>Return Rate</th>
-                            <th>Min Amount</th>
-                            <th>Max Amount</th>
-                            <th>Followers</th>
+                            <th>Experience</th>
+                            <th>Success Rate</th>
+                            <th>Min Portfolio</th>
+                            <th>Currency Pairs</th>
                             <th>Verified</th>
                             <th>Actions</th>
                         </tr>
@@ -39,10 +39,10 @@
                                 </div>
                                 @endif
                             </td>
-                            <td>{{ $trader->return_rate }}%</td>
-                            <td>${{ number_format($trader->min_amount) }}</td>
-                            <td>${{ number_format($trader->max_amount) }}</td>
-                            <td>{{ number_format($trader->followers) }}</td>
+                            <td>{{ $trader->experience ?? 'N/A' }}</td>
+                            <td>{{ $trader->percentage ?? 'N/A' }}</td>
+                            <td>${{ number_format($trader->min_portfolio) }}</td>
+                            <td>{{ $trader->currency_pairs ?? 'N/A' }}</td>
                             <td>
                                 @if($trader->is_verified)
                                 <span class="badge badge-success">Verified</span>

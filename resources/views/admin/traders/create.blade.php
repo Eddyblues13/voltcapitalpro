@@ -33,53 +33,36 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Min. Portfolio ($)*</label>
-                    <input type="number" class="form-control" name="min_amount" step="0.01" min="0"
-                        max="999999999999.99" value="{{ old('min_amount') }}" required>
-                    @error('min_amount')
+                    <label>Minimum Portfolio ($)*</label>
+                    <input type="number" class="form-control" name="min_portfolio" step="0.01" min="0"
+                        max="999999999999.99" value="{{ old('min_portfolio') }}" required>
+                    @error('min_portfolio')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Max. Portfolio ($)*</label>
-                    <input type="number" class="form-control" name="max_amount" step="0.01" min="0"
-                        max="999999999999.99" value="{{ old('max_amount') }}" required>
-                    @error('max_amount')
+                    <label>Experience</label>
+                    <input type="text" class="form-control" name="experience" placeholder="e.g. 5 years"
+                        value="{{ old('experience') }}">
+                    @error('experience')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label>Return Rate (%)*</label>
-                    <input type="number" class="form-control" name="return_rate" step="0.01" min="0" max="999999.99"
-                        value="{{ old('return_rate') }}" required>
-                    @error('return_rate')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label>Profit Share (%)*</label>
-                    <input type="number" class="form-control" name="profit_share" step="0.01" min="0" max="999.99"
-                        value="{{ old('profit_share') }}" required>
-                    @error('profit_share')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label>Followers</label>
-                    <input type="number" class="form-control" name="followers" min="0"
-                        value="{{ old('followers', 0) }}">
-                    @error('followers')
+                    <label>Percentage (%)</label>
+                    <input type="text" class="form-control" name="percentage" placeholder="e.g. 95%"
+                        value="{{ old('percentage') }}">
+                    @error('percentage')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
                     <label>Currency Pairs</label>
-                    <input type="text" class="form-control" name="currency_pairs" value="{{ old('currency_pairs') }}">
+                    <input type="text" class="form-control" name="currency_pairs" placeholder="e.g. EUR/USD, BTC/USD"
+                        value="{{ old('currency_pairs') }}">
                     @error('currency_pairs')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
@@ -87,7 +70,8 @@
 
                 <div class="form-group">
                     <label>Details</label>
-                    <textarea class="form-control" rows="6" name="details">{{ old('details') }}</textarea>
+                    <textarea class="form-control" rows="6" name="details"
+                        placeholder="Trader's description">{{ old('details') }}</textarea>
                     @error('details')
                     <span class="text-danger">{{ $message }}</span>
                     @enderror
@@ -102,7 +86,8 @@
                 </div>
 
                 <div class="form-group form-check">
-                    <input type="checkbox" class="form-check-input" name="is_verified" id="is_verified" value="1">
+                    <input type="checkbox" class="form-check-input" name="is_verified" id="is_verified" value="1" {{
+                        old('is_verified') ? 'checked' : '' }}>
                     <label class="form-check-label" for="is_verified">Verified Trader</label>
                 </div>
 
@@ -131,8 +116,8 @@
         toastNotifyError("{{ Session::get('error') }}");
     @endif
     
-    @if($errors->any())
-        @foreach($errors->all() as $error)
+    @if($errors->any()))
+        @foreach($errors->all() as $error))
             toastNotifyError("{{ $error }}");
         @endforeach
     @endif

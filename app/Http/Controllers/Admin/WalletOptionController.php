@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\WalletOption;
+use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use Cloudinary\Cloudinary;
 use Cloudinary\Api\Upload\UploadApi;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class WalletOptionController extends Controller
 {
@@ -25,8 +26,8 @@ class WalletOptionController extends Controller
      */
     public function index()
     {
-        $walletOptions = WalletOption::all();
-        return view('admin.update_wallet', compact('walletOptions'));
+        $paymentMethods = PaymentMethod::paginate(10); // 10 items per page
+        return view('admin.update_wallet', compact('paymentMethods'));
     }
 
     /**
@@ -35,135 +36,145 @@ class WalletOptionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'coin_code' => 'required|string|max:10',
-            'coin_name' => 'required|string|max:100',
-            'wallet_name' => 'required|string|max:100',
-            'wallet_type' => 'required|string|max:50',
-            'network_type' => 'required|string|max:50',
+            'name' => 'required|string|max:100',
             'wallet_address' => 'required|string|max:255',
-            'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'coin_pic' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'scan_code' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         try {
-            $data = $validated;
+            $data = [
+                'name' => $validated['name'],
+                'wallet_address' => $validated['wallet_address']
+            ];
 
-            // Handle icon upload to Cloudinary
-            if ($request->hasFile('icon')) {
+            // Upload coin picture to Cloudinary
+            if ($request->hasFile('coin_pic')) {
                 $uploadResult = $this->uploadApi->upload(
-                    $request->file('icon')->getRealPath(),
-                    [
-                        'folder' => 'wallet_icons',
-                        'transformation' => [
-                            'width' => 100,
-                            'height' => 100,
-                            'crop' => 'fill'
-                        ]
-                    ]
+                    $request->file('coin_pic')->getRealPath(),
+                    ['folder' => 'payment_methods/coin_pics']
                 );
-
-                $data['icon'] = $uploadResult['secure_url'];
-                $data['icon_public_id'] = $uploadResult['public_id'];
-            } elseif ($request->has('icon_url')) {
-                $data['icon'] = $request->icon_url;
-                $data['icon_public_id'] = null;
+                $data['coin_pic_path'] = $uploadResult['secure_url'];
+                $data['coin_pic_public_id'] = $uploadResult['public_id'];
             }
 
-            WalletOption::create($data);
+            // Upload scan code to Cloudinary
+            if ($request->hasFile('scan_code')) {
+                $uploadResult = $this->uploadApi->upload(
+                    $request->file('scan_code')->getRealPath(),
+                    ['folder' => 'payment_methods/scan_codes']
+                );
+                $data['scan_code_path'] = $uploadResult['secure_url'];
+                $data['scan_code_public_id'] = $uploadResult['public_id'];
+            }
 
-            return redirect()->route('admin.wallet_options.index')
-                ->with('success', 'Wallet option created successfully.');
+            PaymentMethod::create($data);
+
+            return redirect()->route('admin.payment_methods.index')
+                ->with('success', 'Payment method created successfully.');
         } catch (\Exception $e) {
-            Log::error('WalletOption creation failed: ' . $e->getMessage());
-            return back()->withInput()->with('error', 'Failed to create wallet option. Please try again.');
+            Log::error('PaymentMethod creation failed: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Failed to create payment method. Please try again.');
         }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, WalletOption $walletOption)
+    public function update(Request $request, PaymentMethod $paymentMethod)
     {
         $validated = $request->validate([
-            'coin_code' => 'required|string|max:10',
-            'coin_name' => 'required|string|max:100',
-            'wallet_name' => 'required|string|max:100',
-            'wallet_type' => 'required|string|max:50',
-            'network_type' => 'required|string|max:50',
+            'name' => 'required|string|max:100',
             'wallet_address' => 'required|string|max:255',
-            'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'remove_icon' => 'nullable|boolean',
+            'coin_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'scan_code' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'remove_coin_pic' => 'nullable|boolean',
+            'remove_scan_code' => 'nullable|boolean',
         ]);
 
         try {
-            $data = $validated;
+            $data = [
+                'name' => $validated['name'],
+                'wallet_address' => $validated['wallet_address']
+            ];
 
-            // Remove icon if requested
-            if ($request->has('remove_icon') && $request->boolean('remove_icon')) {
-                if ($walletOption->icon_public_id) {
-                    $this->uploadApi->destroy($walletOption->icon_public_id);
+            // Handle coin picture
+            if ($request->has('remove_coin_pic') && $request->boolean('remove_coin_pic')) {
+                if ($paymentMethod->coin_pic_public_id) {
+                    $this->uploadApi->destroy($paymentMethod->coin_pic_public_id);
+                }
+                $data['coin_pic'] = null;
+                $data['coin_pic_public_id'] = null;
+            } elseif ($request->hasFile('coin_pic')) {
+                // Delete old coin pic if exists
+                if ($paymentMethod->coin_pic_public_id) {
+                    $this->uploadApi->destroy($paymentMethod->coin_pic_public_id);
                 }
 
-                $data['icon'] = null;
-                $data['icon_public_id'] = null;
-            }
-
-            // Handle icon upload to Cloudinary if new icon is provided
-            if ($request->hasFile('icon')) {
-                // First delete old icon if exists
-                if ($walletOption->icon_public_id) {
-                    $this->uploadApi->destroy($walletOption->icon_public_id);
-                }
-
+                // Upload new coin pic
                 $uploadResult = $this->uploadApi->upload(
-                    $request->file('icon')->getRealPath(),
-                    [
-                        'folder' => 'wallet_icons',
-                        'transformation' => [
-                            'width' => 100,
-                            'height' => 100,
-                            'crop' => 'fill'
-                        ]
-                    ]
+                    $request->file('coin_pic')->getRealPath(),
+                    ['folder' => 'payment_methods/coin_pics']
                 );
-
-                $data['icon'] = $uploadResult['secure_url'];
-                $data['icon_public_id'] = $uploadResult['public_id'];
-            } elseif ($request->has('icon_url')) {
-                $data['icon'] = $request->icon_url;
-                $data['icon_public_id'] = null;
+                $data['coin_pic_path'] = $uploadResult['secure_url'];
+                $data['coin_pic_public_id'] = $uploadResult['public_id'];
             }
 
-            // Remove 'remove_icon' from data to avoid filling unnecessary column
-            unset($data['remove_icon']);
+            // Handle scan code
+            if ($request->has('remove_scan_code') && $request->boolean('remove_scan_code')) {
+                if ($paymentMethod->scan_code_public_id) {
+                    $this->uploadApi->destroy($paymentMethod->scan_code_public_id);
+                }
+                $data['scan_code'] = null;
+                $data['scan_code_public_id'] = null;
+            } elseif ($request->hasFile('scan_code')) {
+                // Delete old scan code if exists
+                if ($paymentMethod->scan_code_public_id) {
+                    $this->uploadApi->destroy($paymentMethod->scan_code_public_id);
+                }
 
-            $walletOption->update($data);
+                // Upload new scan code
+                $uploadResult = $this->uploadApi->upload(
+                    $request->file('scan_code')->getRealPath(),
+                    ['folder' => 'payment_methods/scan_codes']
+                );
+                $data['scan_code_path'] = $uploadResult['secure_url'];
+                $data['scan_code_public_id'] = $uploadResult['public_id'];
+            }
 
-            return redirect()->route('admin.wallet_options.index')
-                ->with('success', 'Wallet option updated successfully.');
+            $paymentMethod->update($data);
+
+            return redirect()->route('admin.payment_methods.index')
+                ->with('success', 'Payment method updated successfully.');
         } catch (\Exception $e) {
-            Log::error('WalletOption update failed: ' . $e->getMessage());
-            return back()->withInput()->with('error', 'Failed to update wallet option. Please try again.');
+            Log::error('PaymentMethod update failed: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Failed to update payment method. Please try again.');
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(WalletOption $walletOption)
+    public function destroy(PaymentMethod $paymentMethod)
     {
         try {
-            // Delete icon from Cloudinary if exists
-            if ($walletOption->icon_public_id) {
-                $this->uploadApi->destroy($walletOption->icon_public_id);
+            // Delete coin pic from Cloudinary if exists
+            if ($paymentMethod->coin_pic_public_id) {
+                $this->uploadApi->destroy($paymentMethod->coin_pic_public_id);
             }
 
-            $walletOption->delete();
+            // Delete scan code from Cloudinary if exists
+            if ($paymentMethod->scan_code_public_id) {
+                $this->uploadApi->destroy($paymentMethod->scan_code_public_id);
+            }
 
-            return redirect()->route('admin.wallet_options.index')
-                ->with('success', 'Wallet option deleted successfully.');
+            $paymentMethod->delete();
+
+            return redirect()->route('admin.payment_methods.index')
+                ->with('success', 'Payment method deleted successfully.');
         } catch (\Exception $e) {
-            Log::error('WalletOption deletion failed: ' . $e->getMessage());
-            return back()->with('error', 'Failed to delete wallet option. Please try again.');
+            Log::error('PaymentMethod deletion failed: ' . $e->getMessage());
+            return back()->with('error', 'Failed to delete payment method. Please try again.');
         }
     }
 }

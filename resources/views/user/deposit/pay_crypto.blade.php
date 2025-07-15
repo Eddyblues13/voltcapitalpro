@@ -4,22 +4,26 @@
     <div class="pay-crypto-payment-card">
         <div class="send-amount text-secondary">SEND {{ $crypto_amount ?? '0.00000000' }} {{ $payment_method ?? 'BTC' }}
         </div>
+
         <div class="coin-info">
             <span class="badge bg-primary">{{ $coin_name ?? 'Bitcoin' }}</span>
-            <span class="badge bg-secondary">{{ $network_type ?? 'Mainnet' }}</span>
+            @if($coin_image)
+            <img src="{{ $coin_image }}" alt="{{ $coin_name }} icon"
+                style="width: 30px; height: 30px; margin-left: 10px;">
+            @endif
         </div>
+
         <div class="instruction">TO THE WALLET ADDRESS BELOW OR SCAN THE QR CODE WITH YOUR WALLET APP</div>
         <div class="wallet-address" id="walletAddress">{{ $wallet_address ?? 'Generating address...' }}</div>
 
         <div class="qr-code">
+            @if($scan_code)
+            <img src="{{ $scan_code }}" alt="Payment QR Code" style="width: 100%; height: 100%;">
+            @else
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode($wallet_address) }}"
-                alt="QR Code" style="width: 100%; height: 100%;">
+                alt="Generated QR Code" style="width: 100%; height: 100%;">
+            @endif
         </div>
-
-        {{-- <div class="network-warning">
-            <i class="fas fa-exclamation-triangle"></i> Ensure you're sending {{ $payment_method }} via {{ $network_type
-            }} network only
-        </div> --}}
 
         <div class="timer text-secondary" id="paymentTimer">15:00</div>
         <div class="status" id="paymentStatus">Awaiting Payment</div>
@@ -28,9 +32,9 @@
         <input type="hidden" id="cryptoType" value="{{ $crypto }}">
 
         <button class="button px-4" onclick="copyToClipboard()">CLICK TO COPY WALLET ADDRESS</button>
-        <a href="{{route('deposit.page')}}"><button class="button px-4" id="paymentMadeBtn">I HAVE MADE THE
+        <a href="{{ route('deposit.page') }}"><button class="button px-4" id="paymentMadeBtn">I HAVE MADE THE
                 PAYMENT</button></a>
-        <a href="{{route('deposit.page')}}"><button class="diff-button px-4" id="waitConfirmBtn">WAIT FOR
+        <a href="{{ route('deposit.page') }}"><button class="diff-button px-4" id="waitConfirmBtn">WAIT FOR
                 CONFIRMATION</button></a>
     </div>
 </div>
