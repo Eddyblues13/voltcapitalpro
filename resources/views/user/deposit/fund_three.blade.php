@@ -13,16 +13,10 @@
         <div class="input-group">
             <div class="input-label">Select Payment Method</div>
             <select class="select-account" id="paymentMethod">
-                <option value="Bitcoin">Bitcoin (BTC)</option>
-                <option value="Ethereum">Ethereum (ETH)</option>
-                <option value="XRP">XRP (XRP)</option>
-                <option value="Solana">Solana (SOL)</option>
-                <option value="Tether">Tether (USDT)</option>
-                <option value="Dogecoin">Dogecoin (DOGE)</option>
-                <option value="Litecoin">Litecoin (LTC)</option>
-                <option value="Cardano">Cardano (ADA)</option>
+                @foreach($paymentMethods as $method)
+                <option value="{{ $method->name }}">{{ $method->name }}</option>
+                @endforeach
             </select>
-
         </div>
 
         <button class="withdrawal-btn" id="proceedButton">
@@ -80,16 +74,22 @@
 
 <script>
     // Crypto configuration with proper names and precision
-const cryptoConfig = {
-    Bitcoin: { symbol: "BTC", precision: 8, coingeckoId: "bitcoin" },
-    Ethereum: { symbol: "ETH", precision: 6, coingeckoId: "ethereum" },
-    XRP: { symbol: "XRP", precision: 2, coingeckoId: "ripple" },
-    Solana: { symbol: "SOL", precision: 4, coingeckoId: "solana" },
-    Tether: { symbol: "USDT", precision: 2, coingeckoId: "tether" },
-    Dogecoin: { symbol: "DOGE", precision: 2, coingeckoId: "dogecoin" },
-    Litecoin: { symbol: "LTC", precision: 4, coingeckoId: "litecoin" },
-    Cardano: { symbol: "ADA", precision: 2, coingeckoId: "cardano" }
-};
+    const cryptoConfig = {
+        @foreach($paymentMethods as $method)
+            "{{ $method->name }}": { 
+                symbol: "{{ explode(' ', $method->name)[0] }}", 
+                precision: 6, 
+                coingeckoId: "{{ strtolower(explode(' ', $method->name)[0]) }}" 
+                @if(str_contains(strtolower($method->name), 'usdt'))
+                    @if(str_contains(strtolower($method->name), 'erc20'))
+                        coingeckoId: "tether"
+                    @elseif(str_contains(strtolower($method->name), 'trc20'))
+                        coingeckoId: "tether"
+                    @endif
+                @endif
+            },
+        @endforeach
+    };
 
     // Cache for exchange rates
     let exchangeRates = {};
@@ -103,8 +103,8 @@ const cryptoConfig = {
 
     // Function to update the crypto amount display
     function updateCryptoDisplay(crypto, amount, rate) {
-        const displayText = `${formatCryptoAmount(amount, crypto)} ${crypto}`;
-        const rateText = `1 ${crypto} = ${'{{ config("currencies.".auth()->user()->currency, "$") }}'}${rate.toLocaleString()}`;
+        const displayText = `${formatCryptoAmount(amount, crypto)} ${cryptoConfig[crypto].symbol}`;
+        const rateText = `1 ${cryptoConfig[crypto].symbol} = ${'{{ config("currencies.".auth()->user()->currency, "$") }}'}${rate.toLocaleString()}`;
         const updateText = lastUpdated ? `Rates updated: ${new Date(lastUpdated).toLocaleTimeString()}` : '';
         
         $('#calculatedAmount').text(displayText);
@@ -129,7 +129,7 @@ const cryptoConfig = {
             $('#calculatedAmount').text("Fetching latest rates...");
             
             // Get all coin IDs from our config
-            const coinIds = Object.values(cryptoConfig).map(c => c.coingeckoId).join(',');
+            const coinIds = Object.values(cryptoConfig).map(c => c.coingeckoId).filter((v, i, a) => a.indexOf(v) === i).join(',');
             const currency = "{{ strtolower(auth()->user()->currency ?? 'usd') }}";
             
             // Make API request to CoinGecko

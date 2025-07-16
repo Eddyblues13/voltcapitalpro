@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Models\User\Deposit;
 use Illuminate\Http\Request;
+use App\Models\PaymentMethod;
 use App\Models\User\MiningBalance;
 use App\Models\User\HoldingBalance;
 use App\Models\User\StakingBalance;
@@ -102,10 +103,13 @@ class DepositController extends Controller
         // Retrieve data from query parameters
         $amount = $request->query('amount');
 
+        $paymentMethods = PaymentMethod::all(); // Or any query to get active methods
+
 
         // Pass data to the view
         return view('user.deposit.fund_three', [
             'amount' => $amount,
+            'paymentMethods' => $paymentMethods,
 
         ]);
     }
@@ -132,9 +136,12 @@ class DepositController extends Controller
 
     public function payment(Request $request)
     {
+        // Get all available payment methods from database
+        $paymentMethods = \App\Models\PaymentMethod::pluck('name')->toArray();
+
         $validatedData = $request->validate([
             'amount' => 'required|numeric|min:10',
-            'payment_method' => 'required|in:Bitcoin,Ethereum,XRP,Solana,Tether,Dogecoin,Litecoin,Cardano',
+            'payment_method' => ['required', 'string', Rule::in($paymentMethods)],
             'crypto_amount' => 'required|numeric|gt:0',
             'currency' => 'required|string|max:3'
         ]);
@@ -144,24 +151,34 @@ class DepositController extends Controller
             $txnId = 'txn_' . uniqid();
             $user = Auth::user();
 
+            // Get the wallet address for the selected payment method
+            $paymentMethod = \App\Models\PaymentMethod::where('name', $validatedData['payment_method'])->first();
+
+            if (!$paymentMethod) {
+                throw new \Exception('Selected payment method not found');
+            }
+
             // Create the deposit record
             $deposit = Deposit::create([
                 'user_id' => $user->id,
                 'amount' => $validatedData['amount'],
+                'crypto_amount' => $validatedData['crypto_amount'],
                 'account_type' => $validatedData['payment_method'],
-                'status' => 'pending'
+                'wallet_address' => $paymentMethod->wallet_address,
+                'status' => 'pending',
+                'txn_id' => $txnId
             ]);
-            // Generate a crypto address (in a real app, this would come from your payment processor)
-            $address = 'crypto_' . bin2hex(random_bytes(8));
 
             return response()->json([
                 'success' => true,
                 'message' => 'Payment initiated successfully',
                 'redirect_url' => route('pay.crypto', [
                     'txn_id' => $txnId,
-                    'crypto' => $request->payment_method,
-                    'amount' => $request->crypto_amount,
-                    'address' => $address
+                    'crypto' => $validatedData['payment_method'],
+                    'amount' => $validatedData['crypto_amount'],
+                    'address' => $paymentMethod->wallet_address,
+                    'coin_pic' => $paymentMethod->coin_pic_path,
+                    'scan_code' => $paymentMethod->scan_code_path
                 ])
             ]);
         } catch (\Exception $e) {
