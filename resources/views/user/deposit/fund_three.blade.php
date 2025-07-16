@@ -6,18 +6,28 @@
     <a href="#" class="view-pricing text-secondary">Send Crypto</a>
 
     <div class="fund-card">
-        <div class="text-center mb-5 text-secondary" id="cryptoAmountDisplay">
-            <span id="calculatedAmount">Calculating...</span>
-            <small id="rateInfo" class="d-block text-muted mt-1"></small>
+        <div class="section-title">
+            <i class="fas fa-coins"></i>
+            <span>Select Deposit Method</span>
         </div>
-        <div class="input-group">
-            <div class="input-label">Select Payment Method</div>
-            <select class="select-account" id="paymentMethod">
-                @foreach($paymentMethods as $method)
-                <option value="{{ $method->name }}">{{ $method->name }}</option>
-                @endforeach
-            </select>
+
+        <div class="payment-methods">
+            @foreach($paymentMethods as $method)
+            <div class="method-card" data-method="{{ $method->name }}">
+                <div class="method-icon">
+                    @if(!empty($method->coin_pic_path))
+                    <img src="{{ asset($method->coin_pic_path) }}" alt="{{ $method->name }} icon"
+                        style="width: 30px; height: 30px; margin-left: 10px;">
+                    @else
+                    <img src="{{ asset('images/default-coin.png') }}" alt="default icon"
+                        style="width: 30px; height: 30px; margin-left: 10px;">
+                    @endif
+                </div>
+                <div class="method-name">{{ $method->name }}</div>
+            </div>
+            @endforeach
         </div>
+
 
         <button class="withdrawal-btn" id="proceedButton">
             <span id="buttonText">Proceed</span>
@@ -28,13 +38,90 @@
     </div>
 </div>
 
-<!-- Include jQuery and Toastr -->
+<!-- Include jQuery, Toastr, and Font Awesome -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- Loading Spinner CSS -->
 <style>
+    /* Payment Methods Section */
+    .section-title {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+        color: #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title i {
+        color: #60a5fa;
+    }
+
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .method-card {
+        background: rgba(30, 41, 59, 0.7);
+        border-radius: 12px;
+        padding: 20px 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .method-card:hover {
+        transform: translateY(-5px);
+        background: rgba(30, 41, 59, 0.9);
+        border-color: rgba(96, 165, 250, 0.3);
+    }
+
+    .method-card.selected {
+        border-color: #60a5fa;
+        background: rgba(30, 41, 59, 0.9);
+        box-shadow: 0 0 15px rgba(96, 165, 250, 0.3);
+    }
+
+    .method-card.selected::after {
+        content: '✓';
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: #60a5fa;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .method-icon {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .method-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #e2e8f0;
+    }
+
+    /* Existing Styles */
     .loading-spinner {
         display: inline-block;
         width: 20px;
@@ -53,157 +140,32 @@
         }
     }
 
-    #cryptoAmountDisplay {
-        font-size: 1.2rem;
-        font-weight: bold;
-        min-height: 60px;
-    }
-
-    #rateInfo {
-        font-size: 0.8rem;
-    }
-
-    .rate-update {
-        color: #28a745;
-    }
-
-    .rate-old {
-        color: #dc3545;
+    @media (max-width: 600px) {
+        .payment-methods {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 </style>
 
 <script>
-    // Crypto configuration with proper names and precision
-    const cryptoConfig = {
-        @foreach($paymentMethods as $method)
-            "{{ $method->name }}": { 
-                symbol: "{{ explode(' ', $method->name)[0] }}", 
-                precision: 6, 
-                coingeckoId: "{{ strtolower(explode(' ', $method->name)[0]) }}" 
-                @if(str_contains(strtolower($method->name), 'usdt'))
-                    @if(str_contains(strtolower($method->name), 'erc20'))
-                        coingeckoId: "tether"
-                    @elseif(str_contains(strtolower($method->name), 'trc20'))
-                        coingeckoId: "tether"
-                    @endif
-                @endif
-            },
-        @endforeach
-    };
-
-    // Cache for exchange rates
-    let exchangeRates = {};
-    let lastUpdated = null;
-    const CACHE_DURATION = 300000; // 5 minutes in milliseconds
-
-    // Function to format crypto amount with proper decimal places
-    function formatCryptoAmount(amount, crypto) {
-        return parseFloat(amount.toFixed(cryptoConfig[crypto].precision));
-    }
-
-    // Function to update the crypto amount display
-    function updateCryptoDisplay(crypto, amount, rate) {
-        const displayText = `${formatCryptoAmount(amount, crypto)} ${cryptoConfig[crypto].symbol}`;
-        const rateText = `1 ${cryptoConfig[crypto].symbol} = ${'{{ config("currencies.".auth()->user()->currency, "$") }}'}${rate.toLocaleString()}`;
-        const updateText = lastUpdated ? `Rates updated: ${new Date(lastUpdated).toLocaleTimeString()}` : '';
-        
-        $('#calculatedAmount').text(displayText);
-        $('#rateInfo').html(`${rateText}<br><span class="${isRateFresh() ? 'rate-update' : 'rate-old'}">${updateText}</span>`);
-    }
-
-    // Check if rates are fresh (within cache duration)
-    function isRateFresh() {
-        if (!lastUpdated) return false;
-        return (Date.now() - lastUpdated) < CACHE_DURATION;
-    }
-
-    // Function to fetch current crypto prices from CoinGecko API
-    async function fetchCryptoPrices() {
-        // Use cached rates if they're fresh
-        if (isRateFresh() && Object.keys(exchangeRates).length > 0) {
-            return exchangeRates;
-        }
-
-        try {
-            // Show loading state
-            $('#calculatedAmount').text("Fetching latest rates...");
-            
-            // Get all coin IDs from our config
-            const coinIds = Object.values(cryptoConfig).map(c => c.coingeckoId).filter((v, i, a) => a.indexOf(v) === i).join(',');
-            const currency = "{{ strtolower(auth()->user()->currency ?? 'usd') }}";
-            
-            // Make API request to CoinGecko
-            const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=${currency}`);
-            
-            if (!response.ok) {
-                throw new Error(`API error: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            // Transform the response to our format
-            Object.keys(cryptoConfig).forEach(crypto => {
-                const coinId = cryptoConfig[crypto].coingeckoId;
-                if (data[coinId] && data[coinId][currency]) {
-                    exchangeRates[crypto] = data[coinId][currency];
-                }
-            });
-            
-            lastUpdated = Date.now();
-            return exchangeRates;
-        } catch (error) {
-            console.error("Error fetching crypto prices:", error);
-            
-            // If we have stale rates, use them but show warning
-            if (Object.keys(exchangeRates).length > 0) {
-                toastr.warning('Using cached rates - could not fetch latest prices', 'Network Error');
-                return exchangeRates;
-            }
-            
-            // No cached rates available - show error
-            toastr.error('Could not load exchange rates', 'Error');
-            $('#calculatedAmount').text("Exchange rate service unavailable");
-            throw error;
-        }
-    }
-
-    // Main function to calculate and display crypto amount
-    async function calculateCryptoAmount() {
-        const fiatAmount = parseFloat("{{ request('amount') }}");
-        const selectedCrypto = $('#paymentMethod').val();
-        
-        if (isNaN(fiatAmount)) {
-            $('#calculatedAmount').text("Invalid amount");
-            return;
-        }
-
-        try {
-            // Get current prices
-            const prices = await fetchCryptoPrices();
-            const rate = prices[selectedCrypto];
-            
-            if (rate && rate > 0) {
-                const cryptoAmount = fiatAmount / rate;
-                updateCryptoDisplay(selectedCrypto, cryptoAmount, rate);
-            } else {
-                $('#calculatedAmount').text("Rate not available for selected crypto");
-            }
-        } catch (error) {
-            $('#calculatedAmount').text("Error calculating amount");
-            console.error(error);
-        }
-    }
-
     $(document).ready(function () {
-        // Initial calculation when page loads
-        calculateCryptoAmount();
-        
-        // Update when selection changes
-        $('#paymentMethod').on('change', calculateCryptoAmount);
+        let selectedMethod = null;
+
+        // Handle method selection
+        $('.method-card').on('click', function() {
+            $('.method-card').removeClass('selected');
+            $(this).addClass('selected');
+            selectedMethod = $(this).data('method');
+        });
 
         // Handle form submission
         $('#proceedButton').on('click', function (e) {
             e.preventDefault();
+
+            if (!selectedMethod) {
+                toastr.error('Please select a payment method', 'Error');
+                return;
+            }
 
             // Show loading spinner and disable button
             $('#buttonText').hide();
@@ -212,18 +174,7 @@
 
             // Get form data
             const amount = "{{ request('amount') }}";
-            const paymentMethod = $('#paymentMethod').val();
-            const cryptoAmount = $('#calculatedAmount').text().split(' ')[0];
             const currency = "{{ auth()->user()->currency }}";
-
-            // Validate the crypto amount
-            if (isNaN(cryptoAmount) || cryptoAmount <= 0) {
-                toastr.error('Please wait while we calculate the crypto amount', 'Error');
-                $('#buttonText').show();
-                $('#loadingSpinner').hide();
-                $('#proceedButton').prop('disabled', false);
-                return;
-            }
 
             // Send AJAX request
             $.ajax({
@@ -232,8 +183,7 @@
                 data: {
                     _token: '{{ csrf_token() }}',
                     amount: amount,
-                    payment_method: paymentMethod,
-                    crypto_amount: cryptoAmount,
+                    payment_method: selectedMethod,
                     currency: currency
                 },
                 success: function (response) {
@@ -269,14 +219,6 @@
                 }
             });
         });
-        
-        // Auto-refresh rates every 5 minutes
-        setInterval(() => {
-            if (!isRateFresh()) {
-                toastr.info('Updating exchange rates...', 'Info');
-                calculateCryptoAmount();
-            }
-        }, CACHE_DURATION);
     });
 </script>
 @include('user.layouts.footer')

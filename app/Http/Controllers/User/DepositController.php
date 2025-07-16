@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Models\User\Deposit;
 use Illuminate\Http\Request;
 use App\Models\PaymentMethod;
+use Illuminate\Validation\Rule;
 use App\Models\User\MiningBalance;
 use App\Models\User\HoldingBalance;
 use App\Models\User\StakingBalance;
@@ -142,7 +143,6 @@ class DepositController extends Controller
         $validatedData = $request->validate([
             'amount' => 'required|numeric|min:10',
             'payment_method' => ['required', 'string', Rule::in($paymentMethods)],
-            'crypto_amount' => 'required|numeric|gt:0',
             'currency' => 'required|string|max:3'
         ]);
 
@@ -162,11 +162,9 @@ class DepositController extends Controller
             $deposit = Deposit::create([
                 'user_id' => $user->id,
                 'amount' => $validatedData['amount'],
-                'crypto_amount' => $validatedData['crypto_amount'],
                 'account_type' => $validatedData['payment_method'],
-                'wallet_address' => $paymentMethod->wallet_address,
                 'status' => 'pending',
-                'txn_id' => $txnId
+
             ]);
 
             return response()->json([
@@ -175,7 +173,7 @@ class DepositController extends Controller
                 'redirect_url' => route('pay.crypto', [
                     'txn_id' => $txnId,
                     'crypto' => $validatedData['payment_method'],
-                    'amount' => $validatedData['crypto_amount'],
+                    // 'amount' => $validatedData['crypto_amount'],
                     'address' => $paymentMethod->wallet_address,
                     'coin_pic' => $paymentMethod->coin_pic_path,
                     'scan_code' => $paymentMethod->scan_code_path
