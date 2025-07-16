@@ -23,12 +23,14 @@
                             </dt>
 
                             <dt>
-                                Profit : {{ number_format($profit->amount ?? 0, 2) }}
+                                Profit :{{ config('currencies.' . $user->currency, '$') }}{{ number_format($profit, 2)
+                                }}
                             </dt>
 
 
                             <dt>
-                                Deposit : {{ number_format($depositBalance->amount ?? 0, 2) }}
+                                Account Balance : {{ config('currencies.' . $user->currency, '$') }}{{
+                                number_format($accountBalance, 2) }}
                             </dt>
 
 

@@ -13,15 +13,16 @@
         <div class="input-group">
             <div class="input-label">Select Payment Method</div>
             <select class="select-account" id="paymentMethod">
-                <option value="BTC">Bitcoin (BTC)</option>
-                <option value="ETH">Ethereum (ETH)</option>
+                <option value="Bitcoin">Bitcoin (BTC)</option>
+                <option value="Ethereum">Ethereum (ETH)</option>
                 <option value="XRP">XRP (XRP)</option>
-                <option value="SOL">Solana (SOL)</option>
-                <option value="USDT">Tether (USDT)</option>
-                <option value="DOGE">Dogecoin (DOGE)</option>
-                <option value="LTC">Litecoin (LTC)</option>
-                <option value="ADA">Cardano (ADA)</option>
+                <option value="Solana">Solana (SOL)</option>
+                <option value="Tether">Tether (USDT)</option>
+                <option value="Dogecoin">Dogecoin (DOGE)</option>
+                <option value="Litecoin">Litecoin (LTC)</option>
+                <option value="Cardano">Cardano (ADA)</option>
             </select>
+
         </div>
 
         <button class="withdrawal-btn" id="proceedButton">
@@ -79,16 +80,16 @@
 
 <script>
     // Crypto configuration with proper names and precision
-    const cryptoConfig = {
-        BTC: { name: "Bitcoin", precision: 8, coingeckoId: "bitcoin" },
-        ETH: { name: "Ethereum", precision: 6, coingeckoId: "ethereum" },
-        XRP: { name: "XRP", precision: 2, coingeckoId: "ripple" },
-        SOL: { name: "Solana", precision: 4, coingeckoId: "solana" },
-        USDT: { name: "Tether", precision: 2, coingeckoId: "tether" },
-        DOGE: { name: "Dogecoin", precision: 2, coingeckoId: "dogecoin" },
-        LTC: { name: "Litecoin", precision: 4, coingeckoId: "litecoin" },
-        ADA: { name: "Cardano", precision: 2, coingeckoId: "cardano" }
-    };
+const cryptoConfig = {
+    Bitcoin: { symbol: "BTC", precision: 8, coingeckoId: "bitcoin" },
+    Ethereum: { symbol: "ETH", precision: 6, coingeckoId: "ethereum" },
+    XRP: { symbol: "XRP", precision: 2, coingeckoId: "ripple" },
+    Solana: { symbol: "SOL", precision: 4, coingeckoId: "solana" },
+    Tether: { symbol: "USDT", precision: 2, coingeckoId: "tether" },
+    Dogecoin: { symbol: "DOGE", precision: 2, coingeckoId: "dogecoin" },
+    Litecoin: { symbol: "LTC", precision: 4, coingeckoId: "litecoin" },
+    Cardano: { symbol: "ADA", precision: 2, coingeckoId: "cardano" }
+};
 
     // Cache for exchange rates
     let exchangeRates = {};
@@ -211,7 +212,6 @@
 
             // Get form data
             const amount = "{{ request('amount') }}";
-            const account = "{{ request('account') }}";
             const paymentMethod = $('#paymentMethod').val();
             const cryptoAmount = $('#calculatedAmount').text().split(' ')[0];
             const currency = "{{ auth()->user()->currency }}";
@@ -232,7 +232,6 @@
                 data: {
                     _token: '{{ csrf_token() }}',
                     amount: amount,
-                    account: account,
                     payment_method: paymentMethod,
                     crypto_amount: cryptoAmount,
                     currency: currency

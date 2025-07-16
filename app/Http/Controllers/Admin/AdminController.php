@@ -41,21 +41,29 @@ class AdminController extends Controller
 
     public function show($id)
     {
-        $user = User::find($id); // or User::where('id', $id)->first();
+        $user = User::where('id', $id)
+            ->first();
 
+        if (!$user) {
+            abort(404, 'User not found');
+        }
 
-        $depositBalance = Deposit::where('user_id', $user->id)->sum('amount') ?? 0;
-        $profit = Profit::where('user_id', $user->id)->sum('amount') ?? 0;
+        $tradingBalance = TradingBalance::where('user_id', $user->id)->sum('amount');
+        $profit = Profit::where('user_id', $user->id)->sum('amount');
 
-        $accountBalance = $depositBalance + $profit;
+        $accountBalance = $tradingBalance + $profit;
 
-        return view('admin.user-details', compact('user', 'depositBalance', 'profit', 'accountBalance'));
+        return view('admin.user-details', compact('user', 'profit', 'accountBalance'));
     }
+
 
 
     public function verifyUser($id)
     {
         $user = User::findOrFail($id);
+
+
+        $user->update(['email_verification' => 1]);
 
         // Generate a verification code
         $verificationCode = rand(1000, 9999);

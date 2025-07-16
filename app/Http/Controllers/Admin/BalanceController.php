@@ -196,25 +196,41 @@ class BalanceController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'amount' => 'required|numeric|min:0',
-            'method' => 'required'
+            'transaction_type' => 'required|in:credit,debit'
         ]);
 
-        // Find existing deposit or create a new one
-        $deposit = \App\Models\User\Deposit::firstOrCreate(
-            [
+        // Find the user
+        $user = \App\Models\User::findOrFail($request->user_id);
+
+        // Process based on transaction type
+        if ($request->transaction_type === 'credit') {
+            // Credit - add funds
+            $deposit = \App\Models\User\TradingBalance::firstOrCreate(
+                [
+                    'user_id' => $request->user_id,
+                ],
+                [
+                    'amount' => 0, // Initial amount if new deposit is created
+                ]
+            );
+
+            $deposit->increment('amount', $request->amount);
+            $message = 'Funds credited successfully.';
+        } else {
+            // Debit - remove funds
+            $deposit = \App\Models\User\TradingBalance::where([
                 'user_id' => $request->user_id,
-                'account_type' => $request->method,
-                'status' => 'approved',
-            ],
-            [
-                'amount' => 0, // Initial amount if new deposit is created
-            ]
-        );
+            ])->first();
 
-        // Increment the amount
-        $deposit->increment('amount', $request->amount);
+            if (!$deposit || $deposit->amount < $request->amount) {
+                return redirect()->back()->with('error', 'Insufficient funds to debit.');
+            }
 
-        return redirect()->back()->with('success', 'Deposit created or updated successfully.');
+            $deposit->decrement('amount', $request->amount);
+            $message = 'Funds debited successfully.';
+        }
+
+        return redirect()->back()->with('success', $message);
     }
 
 

@@ -3,28 +3,38 @@
 <div class="container-fluid page-body-wrapper">
     <div class="main-panel">
         <div class="content-wrapper">
-            <h1>Create Deposit for User #{{ $userId }}</h1>
+            <h6>Create Transaction for User #{{ $userId }}</h6>
 
             <div class="row">
                 <div class="col-md-6 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Deposit Form</h4>
+                            <h4 class="card-title">Transaction Form</h4>
                             <form method="post" action="{{ route('admin.create.deposit') }}">
                                 @csrf
                                 <input type="hidden" name="user_id" value="{{ $userId }}">
 
+
+
                                 <div class="form-group">
                                     <label>Amount</label>
-                                    <input type="number" class="form-control" name="amount" required step="0.01" min="0"
-                                        placeholder="Enter deposit amount">
+                                    <input type="number" class="form-control" name="amount" required step="any" min="1"
+                                        placeholder="Enter amount">
+                                    <small class="text-muted">Minimum amount is 0.01</small>
                                 </div>
 
-
+                                <div class="form-group">
+                                    <label>Transaction Type</label>
+                                    <select class="form-control" name="transaction_type" required>
+                                        <option value="credit">Credit (Add Funds)</option>
+                                        <option value="debit">Debit (Remove Funds)</option>
+                                    </select>
+                                </div>
 
                                 <div class="form-group">
                                     <label>Payment Method</label>
                                     <select class="form-control" name="method" required>
+                                        <option value="">Select Payment Method</option>
                                         <option value="bitcoin">Bitcoin (BTC)</option>
                                         <option value="ethereum">Ethereum (ETH)</option>
                                         <option value="usdt">Tether (USDT)</option>
@@ -41,13 +51,9 @@
                                     </select>
                                 </div>
 
-
-
-
-
                                 <input type="hidden" name="status" value="approved">
 
-                                <button type="submit" class="btn btn-primary mr-2">Create Deposit</button>
+                                <button type="submit" class="btn btn-primary mr-2">Process Transaction</button>
                                 <a href="{{ url()->previous() }}" class="btn btn-light">Cancel</a>
                             </form>
                         </div>

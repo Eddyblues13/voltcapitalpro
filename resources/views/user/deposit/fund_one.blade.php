@@ -8,32 +8,9 @@
 
         <div class="input-group">
             <div class="input-label">Amount ({{ config('currencies.' . auth()->user()->currency, '$') }})</div>
-            <input type="number" class="amount-input" id="amount" value="1000" min="1000" required>
+            <input type="number" class="amount-input" id="amount" min="1" required>
         </div>
 
-        <div class="input-group">
-            <div class="input-label">Account</div>
-            <select class="select-account" id="account" name="account" required>
-                <option value="">Select Account Type</option>
-                <option value="trading" @if(old('account')=='holding' ) selected @endif>
-                    Trading Balance Deposit ({{ config('currencies.' . auth()->user()->currency, '$') }}{{
-                    number_format($holdingBalance ?? 0, 2) }})
-                </option>
-                <option value="trading" @if(old('account')=='holding' ) selected @endif>
-                    Holding Balance ({{ config('currencies.' . auth()->user()->currency, '$') }}{{
-                    number_format($holdingBalance ?? 0, 2) }})
-                </option>
-                {{-- <option value="trading" @if(old('account')=='trading' ) selected @endif>
-                    Trading Balance ({{ config('currencies.' . auth()->user()->currency, '$') }}{{
-                    number_format($tradingBalance ?? 0, 2) }})
-                </option> --}}
-                <option value="mining" @if(old('account')=='mining' ) selected @endif>
-                    Mining Balance ({{ config('currencies.' . auth()->user()->currency, '$') }}{{
-                    number_format($miningBalance ?? 0, 2) }})
-                </option>
-
-            </select>
-        </div>
 
         <button class="withdrawal-btn" id="proceedButton">
             <span id="buttonText">Proceed</span>
@@ -100,7 +77,7 @@
                         toastr.success(response.message);
 
                         // Redirect to the next page with data
-                        window.location.href = '{{ route("deposit.two") }}?amount=' + response.amount + '&account=' + response.account;
+                        window.location.href = '{{ route("deposit.two") }}?amount=' + response.amount;
                     } else {
                         // Show error message
                         toastr.error(response.message);

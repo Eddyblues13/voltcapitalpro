@@ -35,102 +35,64 @@ class DepositController extends Controller
 
         $user = Auth::user();
 
-        return view('user.deposit.fund_one', [
-            'tradingBalance' => TradingBalance::where('user_id', $user->id)->sum('amount') ?? 0,
-            'miningBalance' => MiningBalance::where('user_id', $user->id)->sum('amount') ?? 0,
-            'stakingBalance' => StakingBalance::where('user_id', $user->id)->sum('amount') ?? 0,
-
-        ]);
+        return view('user.deposit.fund_one');
     }
 
     public function stepOneSubmit(Request $request)
     {
-        // Get authenticated user
-        $user = Auth::user();
-
         // Validate the request
         $validatedData = $request->validate([
-            'amount' => 'required|numeric|min:1000', // Minimum deposit of 10
-            'account' => 'required|string|in:holding,trading,mining,staking' // Match your select options
+            'amount' => 'required|numeric|min:10', // Minimum deposit of 10
         ]);
 
-        // Create the deposit record
-        $deposit = Deposit::create([
-            'user_id' => $user->id,
-            'amount' => $validatedData['amount'],
-            'account_type' => $validatedData['account'],
-            'status' => 'pending'
-        ]);
-
-        // Store deposit data in session
-        session([
-            'deposit_id' => $deposit->id,
-            'deposit_amount' => $deposit->amount,
-            'deposit_account_type' => $deposit->account_type
-        ]);
-
-        // Get balances
-        $holdingBalance = HoldingBalance::where('user_id', $user->id)->sum('amount') ?? 0;
-        $stakingBalance = StakingBalance::where('user_id', $user->id)->sum('amount') ?? 0;
-        $tradingBalance = TradingBalance::where('user_id', $user->id)->sum('amount') ?? 0;
-        $referralBalance = ReferralBalance::where('user_id', $user->id)->sum('amount') ?? 0;
-
-        $data = [
-            'holdingBalance' => $holdingBalance,
-            'stakingBalance' => $stakingBalance,
-            'tradingBalance' => $tradingBalance,
-            'referralBalance' => $referralBalance,
-            'totalBalance' => $holdingBalance + $stakingBalance + $tradingBalance + $referralBalance
-        ];
+        // Store amount in session
+        session(['deposit_amount' => $validatedData['amount']]);
 
         // Return JSON response
         return response()->json([
             'success' => true,
-            'message' => 'Deposit request submitted successfully!',
-            'deposit' => [
-                'id' => $deposit->id,
-                'amount' => $deposit->amount,
-                'account_type' => $deposit->account_type,
-                'status' => $deposit->status
+            'message' => 'Deposit amount stored successfully!',
+            'data' => [
+                'amount' => $validatedData['amount'],
             ],
-            'balances' => $data, // Renamed from 'data' to be more descriptive
         ]);
     }
+
     public function stepTwo(Request $request)
     {
-        // Retrieve data from query parameters
-        // $amount = $request->query('amount');
-        // $account = $request->query('account_type');
-        // Get individual session values
-        $depositId = session('deposit_id');
+        // Retrieve the amount from the session
         $amount = session('deposit_amount');
-        $account = session('deposit_account_type');
+
+        // Optional: Redirect back if amount is not set in session
+        if (!$amount) {
+            return redirect()->route('deposit.step.one')->with('error', 'Please enter a deposit amount first.');
+        }
 
         // Pass data to the view
         return view('user.deposit.fund_two', [
             'amount' => $amount,
-            'account' => $account,
         ]);
     }
+
 
     public function stepTwoSubmit(Request $request)
     {
         // Validate input
         $request->validate([
             'amount' => 'required|numeric|min:1',
-            'account' => 'required|in:trading,holding,staking',
+
         ]);
 
         // Process the data (e.g., save to database)
         $amount = $request->input('amount');
-        $account = $request->input('account');
+
 
         // Return JSON response
         return response()->json([
             'success' => true,
             'message' => 'Form submitted successfully!',
             'amount' => $amount,
-            'account' => $account,
+
         ]);
     }
 
@@ -139,12 +101,12 @@ class DepositController extends Controller
     {
         // Retrieve data from query parameters
         $amount = $request->query('amount');
-        $account = $request->query('account');
+
 
         // Pass data to the view
         return view('user.deposit.fund_three', [
             'amount' => $amount,
-            'account' => $account,
+
         ]);
     }
 
@@ -153,50 +115,59 @@ class DepositController extends Controller
         // Validate input
         $request->validate([
             'amount' => 'required|numeric|min:1',
-            'account' => 'required|in:trading,holding,staking',
         ]);
 
         // Process the data (e.g., save to database)
         $amount = $request->input('amount');
-        $account = $request->input('account');
+
 
         // Return JSON response
         return response()->json([
             'success' => true,
             'message' => 'Form submitted successfully!',
             'amount' => $amount,
-            'account' => $account,
+
         ]);
     }
 
-
     public function payment(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'amount' => 'required|numeric|min:10',
-            'payment_method' => 'required|in:BTC,ETH,XRP,SOL,USDT,DOGE,LTC,ADA',
+            'payment_method' => 'required|in:Bitcoin,Ethereum,XRP,Solana,Tether,Dogecoin,Litecoin,Cardano',
             'crypto_amount' => 'required|numeric|gt:0',
-            //'account' => 'required|exists:users,id,user_id,' . auth()->id(),
             'currency' => 'required|string|max:3'
         ]);
 
         try {
+            // Generate a unique transaction ID
+            $txnId = 'txn_' . uniqid();
+            $user = Auth::user();
 
+            // Create the deposit record
+            $deposit = Deposit::create([
+                'user_id' => $user->id,
+                'amount' => $validatedData['amount'],
+                'account_type' => $validatedData['payment_method'],
+                'status' => 'pending'
+            ]);
+            // Generate a crypto address (in a real app, this would come from your payment processor)
+            $address = 'crypto_' . bin2hex(random_bytes(8));
 
             return response()->json([
                 'success' => true,
-                'message' => 'Deposit initiated successfully',
+                'message' => 'Payment initiated successfully',
                 'redirect_url' => route('pay.crypto', [
-                    'txn_id' => 'txn_id',
+                    'txn_id' => $txnId,
                     'crypto' => $request->payment_method,
                     'amount' => $request->crypto_amount,
-                    'address' => 'tysyysu'
+                    'address' => $address
                 ])
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to process deposit: ' . $e->getMessage()
+                'message' => 'Failed to process payment: ' . $e->getMessage()
             ], 500);
         }
     }

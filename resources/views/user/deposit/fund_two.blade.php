@@ -1,7 +1,7 @@
 @include('user.layouts.header')
 <!-- Main Content -->
 <div class="deposit-succes-main-content">
-    <div class="total-label">FUND {{ strtoupper($account) }} BALANCE TOTAL</div>
+    <div class="total-label">FUND BALANCE TOTAL</div>
     <div class="amount text-white" style="font-size: 4rem; color: white !important;">{{ config('currencies.' .
         auth()->user()->currency, '$') }}{{ number_format($amount, 2) }}
     </div>
@@ -26,9 +26,8 @@
         $('#sendCrypto').on('click', function (e) {
             e.preventDefault();
 
-            // Get the amount and account from the page
+            // Get the amount from the page
             const amount = "{{ $amount }}";
-            const account = "{{ $account }}";
 
             // Send AJAX request
             $.ajax({
@@ -36,13 +35,12 @@
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
-                    amount: amount,
-                    account: account
+                    amount: amount
                 },
                 success: function (response) {
                     if (response.success) {
-                        // Redirect to the new page with the amount and account
-                        window.location.href = '{{ route("deposit.three") }}?amount=' + response.amount + '&account=' + response.account;
+                        // Redirect to the new page with the amount
+                        window.location.href = '{{ route("deposit.three") }}?amount=' + response.amount;
                     } else {
                         // Show error message
                         toastr.error(response.message);
