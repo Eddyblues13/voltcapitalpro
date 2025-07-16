@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Models\Trader;
+use App\Models\User\Profit;
+use App\Models\User\Deposit;
 use Illuminate\Http\Request;
 use App\Models\TradingHistory;
 use Illuminate\Support\Facades\DB;
-use App\Models\User\TradingBalance;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,7 +27,7 @@ class CopiedTradeController extends Controller
 
         return view('user.copied-traders', [
             'tradingHistory' => $tradingHistory,
-            'tradingBalance' => $this->getTradingBalance()
+            'tradingBalance' => $this->getAccountBalance()
         ]);
     }
 
@@ -46,13 +48,7 @@ class CopiedTradeController extends Controller
                 ->where('status', 'active')
                 ->firstOrFail();
 
-            // Refund the amount to trading balance
-            TradingBalance::create([
-                'user_id' => Auth::id(),
-                'amount' => $trade->amount
-            ]);
-
-            // Update trade status
+            // Update trade status (no longer refunding to TradingBalance)
             $trade->update([
                 'status' => 'closed',
                 'closed_at' => now()
@@ -74,54 +70,59 @@ class CopiedTradeController extends Controller
         }
     }
 
-    /**
-     * Copy a new trader
-     */
+
+
     public function copyTrader(Request $request)
     {
         $user = Auth::user();
 
         $validated = $request->validate([
             'trader_id' => 'required|exists:traders,id',
-            'amount' => 'nullable'
+            'amount' => 'required|numeric|min:0' // Changed from nullable to required
         ]);
-
-
 
         try {
             DB::beginTransaction();
 
+            // Get trader's minimum amount requirement
+            $trader = Trader::findOrFail($validated['trader_id']);
+            $minAmount = $trader->min_amount ?? 0; // Assuming traders have min_amount column
+
+            // Check if amount meets trader's minimum
+            if ($validated['amount'] < $minAmount) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'account portfolio is low you need a mini of USD' .
+                        number_format($minAmount, 0) .
+                        ' to be able to copy this trader'
+                ], 400);
+            }
+
             // Check available balance
-            $currentBalance = $this->getTradingBalance();
+            $currentBalance = $this->getAccountBalance();
 
-            // if ($currentBalance < $validated['amount']) {
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Insufficient trading balance. Your balance: $' . number_format($currentBalance, 2)
-            //     ], 400);
-            // }
-
-            // Decrement trading balance
-            // TradingBalance::where('user_id', $user->id)
-            //     ->decrement('amount', $validated['amount']);
+            if ($currentBalance < $validated['amount']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Insufficient balance. Your balance: $' . number_format($currentBalance, 2)
+                ], 400);
+            }
 
             // Create trading history record
-            // $trade = TradingHistory::create([
-            //     'user_id' => $user->id,
-            //     'trader_id' => $validated['trader_id'],
-            //     'amount' => $validated['amount'],
-            //     'status' => 'active'
-            // ]);
+            $trade = TradingHistory::create([
+                'user_id' => $user->id,
+                'trader_id' => $validated['trader_id'],
+                'amount' => $validated['amount'],
+                'status' => 'active'
+            ]);
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Successfully copied trader',
-                'new_balance' => $currentBalance,
-                'trade_id' => 2
-                // 'new_balance' => $currentBalance - $validated['amount'],
-                // 'trade_id' => $trade->id
+                'new_balance' => $currentBalance - $validated['amount'],
+                'trade_id' => $trade->id
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -133,11 +134,19 @@ class CopiedTradeController extends Controller
     }
 
     /**
-     * Get user's current trading balance
+     * Get user's current account balance
      */
-    private function getTradingBalance()
+    private function getAccountBalance()
     {
-        return TradingBalance::where('user_id', Auth::id())
+        $user = Auth::user();
+
+        $depositBalance = Deposit::where('user_id', $user->id)
+            ->where('status', 'approved')
             ->sum('amount') ?? 0;
+
+        $profit = Profit::where('user_id', $user->id)
+            ->sum('amount') ?? 0;
+
+        return $depositBalance + $profit;
     }
 }

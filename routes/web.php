@@ -218,7 +218,7 @@ Route::prefix('admin')->group(function () {    // Protecting admin routes using 
         Route::post('/MemberVerify/{id}', [App\Http\Controllers\Admin\AdminController::class, 'memberVerify'])->name('admin.member.verify');
         Route::post('/PaidCF/{id}', [App\Http\Controllers\Admin\AdminController::class, 'paidCF'])->name('admin.paid.cf');
         Route::post('/DeactivateAccount/{id}', [App\Http\Controllers\Admin\AdminController::class, 'deactivateAccount'])->name('admin.deactivate.account');
-        Route::post('/Delete/{id}', [App\Http\Controllers\Admin\AdminController::class, 'deleteUser'])->name('admin.delete.user'); 
+        Route::post('/Delete/{id}', [App\Http\Controllers\Admin\AdminController::class, 'deleteUser'])->name('admin.delete.user');
 
 
 
@@ -263,7 +263,7 @@ Route::prefix('admin')->group(function () {    // Protecting admin routes using 
 
 
         // Traders Routes
-        Route::resource('traders', \App\Http\Controllers\Admin\TraderController::class); 
+        Route::resource('traders', \App\Http\Controllers\Admin\TraderController::class);
 
 
 
@@ -330,7 +330,7 @@ Route::prefix('admin')->group(function () {    // Protecting admin routes using 
             ->name('admin.send.email.form');
         Route::post('/send-email', [App\Http\Controllers\Admin\AdminController::class, 'sendEmail'])
             ->name('admin.send.email');
-          
+
         // Logout Route
         Route::post('/logout', [App\Http\Controllers\Admin\AdminController::class, 'logout'])
             ->name('admin.logout');

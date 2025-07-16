@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Cloudinary\Cloudinary;
 use Cloudinary\Api\Upload\UploadApi;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class WalletOptionController extends Controller
 {
@@ -26,7 +25,7 @@ class WalletOptionController extends Controller
      */
     public function index()
     {
-        $paymentMethods = PaymentMethod::paginate(10); // 10 items per page
+        $paymentMethods = PaymentMethod::paginate(10);
         return view('admin.update_wallet', compact('paymentMethods'));
     }
 
@@ -70,7 +69,7 @@ class WalletOptionController extends Controller
 
             PaymentMethod::create($data);
 
-            return redirect()->route('admin.payment_methods.index')
+            return redirect()->route('admin.wallet_options.index')
                 ->with('success', 'Payment method created successfully.');
         } catch (\Exception $e) {
             Log::error('PaymentMethod creation failed: ' . $e->getMessage());
@@ -81,7 +80,7 @@ class WalletOptionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PaymentMethod $paymentMethod)
+    public function update(Request $request, PaymentMethod $wallet_option)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100',
@@ -100,15 +99,15 @@ class WalletOptionController extends Controller
 
             // Handle coin picture
             if ($request->has('remove_coin_pic') && $request->boolean('remove_coin_pic')) {
-                if ($paymentMethod->coin_pic_public_id) {
-                    $this->uploadApi->destroy($paymentMethod->coin_pic_public_id);
+                if ($wallet_option->coin_pic_public_id) {
+                    $this->uploadApi->destroy($wallet_option->coin_pic_public_id);
                 }
-                $data['coin_pic'] = null;
+                $data['coin_pic_path'] = null;
                 $data['coin_pic_public_id'] = null;
             } elseif ($request->hasFile('coin_pic')) {
                 // Delete old coin pic if exists
-                if ($paymentMethod->coin_pic_public_id) {
-                    $this->uploadApi->destroy($paymentMethod->coin_pic_public_id);
+                if ($wallet_option->coin_pic_public_id) {
+                    $this->uploadApi->destroy($wallet_option->coin_pic_public_id);
                 }
 
                 // Upload new coin pic
@@ -122,15 +121,15 @@ class WalletOptionController extends Controller
 
             // Handle scan code
             if ($request->has('remove_scan_code') && $request->boolean('remove_scan_code')) {
-                if ($paymentMethod->scan_code_public_id) {
-                    $this->uploadApi->destroy($paymentMethod->scan_code_public_id);
+                if ($wallet_option->scan_code_public_id) {
+                    $this->uploadApi->destroy($wallet_option->scan_code_public_id);
                 }
-                $data['scan_code'] = null;
+                $data['scan_code_path'] = null;
                 $data['scan_code_public_id'] = null;
             } elseif ($request->hasFile('scan_code')) {
                 // Delete old scan code if exists
-                if ($paymentMethod->scan_code_public_id) {
-                    $this->uploadApi->destroy($paymentMethod->scan_code_public_id);
+                if ($wallet_option->scan_code_public_id) {
+                    $this->uploadApi->destroy($wallet_option->scan_code_public_id);
                 }
 
                 // Upload new scan code
@@ -142,9 +141,9 @@ class WalletOptionController extends Controller
                 $data['scan_code_public_id'] = $uploadResult['public_id'];
             }
 
-            $paymentMethod->update($data);
+            $wallet_option->update($data);
 
-            return redirect()->route('admin.payment_methods.index')
+            return redirect()->route('admin.wallet_options.index')
                 ->with('success', 'Payment method updated successfully.');
         } catch (\Exception $e) {
             Log::error('PaymentMethod update failed: ' . $e->getMessage());
@@ -155,22 +154,22 @@ class WalletOptionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PaymentMethod $paymentMethod)
+    public function destroy(PaymentMethod $wallet_option)
     {
         try {
             // Delete coin pic from Cloudinary if exists
-            if ($paymentMethod->coin_pic_public_id) {
-                $this->uploadApi->destroy($paymentMethod->coin_pic_public_id);
+            if ($wallet_option->coin_pic_public_id) {
+                $this->uploadApi->destroy($wallet_option->coin_pic_public_id);
             }
 
             // Delete scan code from Cloudinary if exists
-            if ($paymentMethod->scan_code_public_id) {
-                $this->uploadApi->destroy($paymentMethod->scan_code_public_id);
+            if ($wallet_option->scan_code_public_id) {
+                $this->uploadApi->destroy($wallet_option->scan_code_public_id);
             }
 
-            $paymentMethod->delete();
+            $wallet_option->delete();
 
-            return redirect()->route('admin.payment_methods.index')
+            return redirect()->route('admin.wallet_options.index')
                 ->with('success', 'Payment method deleted successfully.');
         } catch (\Exception $e) {
             Log::error('PaymentMethod deletion failed: ' . $e->getMessage());

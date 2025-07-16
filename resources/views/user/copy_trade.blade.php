@@ -5,7 +5,7 @@
 
     <!-- Balance Display -->
     <div class="balance-display mb-4 p-3 bg-dark rounded">
-        <h5 class="text-white">Trading Balance: $<span id="currentTradingBalance">{{ number_format($tradingBalance, 2)
+        <h5 class="text-white">Trading Balance: $<span id="currentTradingBalance">{{ number_format($accountBalance, 2)
                 }}</span></h5>
     </div>
 
@@ -96,7 +96,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-{{-- <script>
+<script>
     $(document).ready(function() {
     // Search functionality
     $('#searchInput').on('input', function() {
@@ -111,7 +111,7 @@
     $('.copy-button').on('click', function() {
         const button = $(this);
         const traderId = button.data('trader-id');
-        const amount = parseFloat(button.data('min-amount'));
+        const amount = parseFloat(button.data('min-portfolio'));
         const traderName = button.data('trader-name');
         
         // Confirm dialog with trader details
@@ -162,7 +162,7 @@ toastr.options = {
     "positionClass": "toast-top-right",
     "timeOut": "5000"
 };
-</script> --}}
+</script>
 
 
 <script>
@@ -180,7 +180,7 @@ toastr.options = {
         $('.copy-button').on('click', function() {
             const button = $(this);
             const traderId = button.data('trader-id');
-            const amount = parseFloat(button.data('min-amount'));
+            const amount = parseFloat(button.data('min-portfolio'));
             
             button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Processing...');
 

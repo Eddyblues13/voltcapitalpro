@@ -70,6 +70,76 @@ if(w.chaport)return;v3=w.chaport={};v3._q=[];v3._l={};v3.q=function(){v3._q.push
     });
   });
 </script>
+
+<script src="{{ asset('alert/ui/js/jquery-2.2.3.js') }}"></script>
+<script src="{{ asset('alert/ui/js/bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('alert/js/jquery.fake-notification.min.js') }}"></script>
+<script>
+  $(document).ready(function() {
+        $('#notification-1').Notification({
+            // Notification variables
+            Varible1: ["Dirk", "Johnny", "Watkin ", "Alejandro", "Vina", "Tony", "Ahmed","Jackson", "Noah", "Aiden", "Darren", "Isabella", "Aria", "John", "Greyson", "Peter", "Mohammed", "William",
+            "Lucas", "Amelia", "Mason", "Mathew", "Richard", "Chris", "Mia", "Oliver"],
+            Varible2: ["USA","UAE","ITALY", "FLORIDA", "MEXICO", "INDIA", "CHINA", "CAMBODIA", "UNITED KINGDOM", "GERMANY", "AUSTRALIA", "BANGLADESH", "SWEDEN", "PAKISTAN", "MALDIVES", "SEYCHELLES", 
+            "BOLIVIA", "SOUTH AFRICA", "ZAMBIA", "ZIMBABWE", "LEBANESE", "SAUDI ARABIA", "CHILE", "PEUTO RICO"],
+            
+            Amount: [9000, 2500,5000,6669,4440,7989,7052],          
+            Content: '[Varible1] from [Varible2] has just Earned <b>$[Amount]</b>',
+            // Timer
+            Show: ['stable', 5, 10],
+            Close: 5,
+            Time: [0, 23],
+            // Notification style 
+            LocationTop: [true, '50%'],
+            LocationBottom:[false, '10%'],
+            LocationRight: [false, '10%'],            
+            LocationLeft:[true, '10px'],
+            Background: '#000000',
+            BorderRadius: 5,
+            BorderWidth: 1,
+            BorderColor: '#ff9900',
+            TextColor: 'white',
+            IconColor: '#ffffff',
+            // Notification Animated   
+            AnimationEffectOpen: 'slideInUp',
+            AnimationEffectClose: 'slideOutDown',
+            // Number of notifications
+            Number: 40,
+            // Notification link
+            Link: [false, 'index.html', '_blank']
+        });     
+    });
+
+    $("form#contact-form").submit(function(e) {
+        e.preventDefault();    
+        var formData = new FormData(this);
+        $.ajax({
+            url: 'process-contact.php',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend:function(){
+                $('#btnContact').html("Sending Message <i class='fa fa-spinner fa-spin'></i>").attr("disabled", true);
+            },
+            success: function (data) {
+                $('#btnContact').html("Send Message <i class='fa fa-rocket'></i>").attr("disabled", false);
+                if (data == "Done") {
+                    swal("Message Sent", "You message was successfully sent to support. You will get a feedback soon", "success");
+                    $("form#contact-form").trigger("reset");
+                } else {
+                    swal("Error", data, "warning");
+                }   
+            },
+            error:function(){
+                swal("Network Unavailable", "Please check your internet connection", "warning");
+                $('#btnContact').html("Send Message <i class='fa fa-rocket'></i>").attr("disabled", false);
+            }
+        });
+    });
+</script>
+
 </body>
 
 </html>

@@ -50,11 +50,13 @@
                 <div class="nav-top flex-grow-1">
                     <div class="container d-flex flex-row h-100">
                         <div class="text-center navbar-brand-wrapper d-flex align-items-center">
-                            <a class="navbar-brand brand-logo" href="{{ url('Admin/Dashboard') }}">
-                                <img src="{{ asset('logo.png') }}" alt="logo">
+                            <a class="navbar-brand brand-logo" href="{{ route('admin.home') }}">
+                                <img src="{{ asset('assets/img/logo.png') }}" alt="logo">
+                                voltcapitalpro
                             </a>
-                            <a class="navbar-brand brand-logo-mini1" href="{{ url('Admin/Dashboard') }}">
-                                <img src="{{ asset('logo-mini.png') }}" alt="logo">
+                            <a class="navbar-brand brand-logo-mini1" href="{{ route('admin.home') }}">
+                                <img src="{{ asset('assets/img/logo.png') }}" alt="logo">
+                                voltcapitalpro
                             </a>
                         </div>
                         <div class="navbar-menu-wrapper d-flex align-items-stretch justify-content-between flex-grow-1">
