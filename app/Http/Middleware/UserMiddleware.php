@@ -23,11 +23,11 @@ class UserMiddleware
             return redirect()->to('/login'); // Redirects to user/home URL
         }
 
-        $user = Auth::user();
+        // $user = Auth::user();
 
-        if (!$user || $user->email_verification == 0) {
-            return redirect()->route('email_verify')->with('error', 'You must verify your email before accessing this page.');
-        }
+        // if (!$user || $user->email_verification == 0) {
+        //     return redirect()->route('email_verify')->with('error', 'You must verify your email before accessing this page.');
+        // }
 
 
 
