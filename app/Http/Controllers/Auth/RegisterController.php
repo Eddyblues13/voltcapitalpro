@@ -215,7 +215,7 @@ class RegisterController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Registration successful! Please check your email for verification code.',
-            'redirect' => route('email_verify'),
+            'redirect' => route('home'),
         ]);
     }
 
