@@ -148,7 +148,8 @@
             },
             error: function(xhr) {
                 const errorMsg = xhr.responseJSON?.message || 'Failed to process request';
-                toastr.error(errorMsg);
+            //    toastr.error(errorMsg);
+              alert(errorMsg);
                 button.prop('disabled', false).text('COPY TRADE');
             }
         });
@@ -205,13 +206,13 @@ toastr.options = {
                         
                         toastr.success(response.message);
                     } else {
-                        toastr.error(response.message);
+                        //toastr.error(response.message);
                         button.prop('disabled', false).text('COPY TRADE');
                     }
                 },
                 error: function(xhr) {
                     const errorMsg = xhr.responseJSON?.message || 'Failed to process request';
-                    toastr.error(errorMsg);
+                   // toastr.error(errorMsg);
                     button.prop('disabled', false).text('COPY TRADE');
                 }
             });

@@ -86,13 +86,13 @@ class CopiedTradeController extends Controller
 
             // Get trader's minimum amount requirement
             $trader = Trader::findOrFail($validated['trader_id']);
-            $minAmount = $trader->min_amount ?? 0; // Assuming traders have min_amount column
+            $minAmount = $trader->min_portfolio ?? 0; // Assuming traders have min_amount column
 
             // Check if amount meets trader's minimum
             if ($validated['amount'] < $minAmount) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'account portfolio is low you need a mini of USD' .
+                    'message' => 'Account portfolio is low you need a mini of USD' .
                         number_format($minAmount, 0) .
                         ' to be able to copy this trader'
                 ], 400);
@@ -104,7 +104,9 @@ class CopiedTradeController extends Controller
             if ($currentBalance < $validated['amount']) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Insufficient balance. Your balance: $' . number_format($currentBalance, 2)
+                    'message' => 'Account portfolio is low you need a mini of USD' .
+                        number_format($minAmount, 0) .
+                        ' to be able to copy this trader'
                 ], 400);
             }
 
