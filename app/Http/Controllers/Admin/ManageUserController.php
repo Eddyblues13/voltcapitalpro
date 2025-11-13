@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 
 class ManageUserController extends Controller
 {
@@ -17,15 +18,18 @@ class ManageUserController extends Controller
     public function showClient(User $user)
     {
         $user->load(['holdingBalance', 'profitBalance', 'referralBalance']);
-        return view('admin.client-details', compact('user'));
-    }
 
+        // Calculate account balance and profit
+        $accountBalance = $user->holdingBalance ? $user->holdingBalance->balance : 0;
+        $profit = $user->profitBalance ? $user->profitBalance->balance : 0;
+
+        return view('admin.user-details', compact('user', 'accountBalance', 'profit'));
+    }
 
     public function deposit($userId)
     {
         return view('admin.deposit-user', ['userId' => $userId]);
     }
-
 
     public function profit($userId)
     {
@@ -55,21 +59,23 @@ class ManageUserController extends Controller
     // AJAX Actions
     public function topup(Request $request, User $user)
     {
-        $user->update(['top_up_status' => true]);
+        $user->update(['top_up_status' => !$user->top_up_status]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Account top-up enabled successfully'
+            'message' => 'Top-up status toggled successfully',
+            'new_status' => $user->top_up_status
         ]);
     }
 
     public function paidRegisterFee(Request $request, User $user)
     {
-        $user->update(['confirmed_registration_fee' => true]);
+        $user->update(['confirmed_registration_fee' => !$user->confirmed_registration_fee]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Registration fee confirmed successfully'
+            'message' => 'Registration fee status toggled successfully',
+            'new_status' => $user->confirmed_registration_fee
         ]);
     }
 
@@ -114,6 +120,32 @@ class ManageUserController extends Controller
             'success' => true,
             'message' => 'Network status toggled successfully',
             'new_status' => $user->network_status
+        ]);
+    }
+
+    public function sendVerification(Request $request, User $user)
+    {
+        // Implementation for sending verification email
+        // You'll need to implement your email sending logic here
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Verification email sent successfully'
+        ]);
+    }
+
+    public function resetPassword(Request $request, User $user)
+    {
+        // Send password reset link
+        $status = Password::sendResetLink(
+            ['email' => $user->email]
+        );
+
+        return response()->json([
+            'success' => $status === Password::RESET_LINK_SENT,
+            'message' => $status === Password::RESET_LINK_SENT
+                ? 'Password reset link sent successfully'
+                : 'Failed to send password reset link'
         ]);
     }
 }

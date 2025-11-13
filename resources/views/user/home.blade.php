@@ -1,7 +1,134 @@
 @include('user.layouts.header')
 
+<!-- Status Notifications Banner -->
+@if(Auth::user()->top_up_mail || Auth::user()->notification_status || Auth::user()->network_status ||
+Auth::user()->upgrade_status || Auth::user()->confirmed_registration_fee ||
+Auth::user()->top_up_status || Auth::user()->subscription_status)
+<div class="status-notifications-banner">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0 text-warning">
+                        <i class="fas fa-bell me-2"></i>Account Notifications
+                    </h6>
+                    <button type="button" class="btn-close btn-close-white" id="closeNotificationsBanner"></button>
+                </div>
+
+                <div class="notifications-container">
+                    @if(Auth::user()->top_up_mail)
+                    <div class="notification-item alert alert-success alert-dismissible fade show mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-money-bill-wave me-2"></i>
+                            <div>
+                                <strong class="me-2">Account Credited:</strong>
+                                Your trading account has been successfully credited with funds. The deposited amount is
+                                now available in your balance and ready for immediate use in your trading activities.
+                                You may proceed to allocate these funds to your preferred trading strategies or
+                                investment opportunities.
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(Auth::user()->notification_status)
+                    <div class="notification-item alert alert-info alert-dismissible fade show mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-bell me-2"></i>
+                            <div>
+                                <strong class="me-2">New Notifications Available:</strong>
+                                You have important updates and notifications waiting in your dashboard. These may
+                                include market alerts, trading signals, account updates, or system announcements. We
+                                recommend reviewing these notifications regularly to stay informed about platform
+                                developments and trading opportunities.
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(Auth::user()->network_status)
+                    <div class="notification-item alert alert-warning alert-dismissible fade show mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-network-wired me-2"></i>
+                            <div>
+                                <strong class="me-2">Network Maintenance Update:</strong>
+                                Our trading infrastructure is currently undergoing scheduled maintenance to enhance
+                                system performance and security. During this period, you may experience temporary
+                                connectivity fluctuations. We are implementing these improvements to ensure optimal
+                                trading execution and platform stability for all users.
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(Auth::user()->upgrade_status)
+                    <div class="notification-item alert alert-primary alert-dismissible fade show mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-level-up-alt me-2"></i>
+                            <div>
+                                <strong class="me-2">Account Upgrade Eligibility:</strong>
+                                Congratulations! Your account activity and performance have qualified you for an
+                                upgraded membership tier. This enhanced status includes premium features, improved
+                                trading conditions, and exclusive market insights. Upgrade now to access advanced
+                                trading tools and maximize your investment potential.
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(Auth::user()->confirmed_registration_fee)
+                    <div class="notification-item alert alert-success alert-dismissible fade show mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <div>
+                                <strong class="me-2">Registration Fee Confirmed:</strong>
+                                Your account registration fee payment has been successfully processed and verified. Full
+                                platform access has been granted, including all trading features, account management
+                                tools, and customer support services. Your account is now fully activated and ready for
+                                comprehensive trading operations.
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(Auth::user()->top_up_status)
+                    <div class="notification-item alert alert-warning alert-dismissible fade show mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <div>
+                                <strong class="me-2">Low Account Balance Alert:</strong>
+                                Your current account balance has fallen below the recommended threshold for optimal
+                                trading operations. To maintain uninterrupted access to all trading features and avoid
+                                potential position limitations, we recommend depositing additional funds. Adequate
+                                balance ensures you can capitalize on market opportunities as they arise.
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(Auth::user()->subscription_status)
+                    <div class="notification-item alert alert-info alert-dismissible fade show mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-crown me-2"></i>
+                            <div>
+                                <strong class="me-2">Premium Subscription Active:</strong>
+                                Your premium subscription is currently active and providing enhanced trading
+                                capabilities. You now have access to advanced charting tools, priority customer support,
+                                exclusive market analysis, and improved trading conditions. Continue to leverage these
+                                premium features to optimize your trading strategy and performance.
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Status Modals -->
-@if(Auth::user()->top_up_mail)
+{{-- @if(Auth::user()->top_up_mail)
 <div class="modal fade" id="topUpMailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content bg-dark text-white">
@@ -139,7 +266,7 @@
         </div>
     </div>
 </div>
-@endif
+@endif --}}
 
 <!-- Main Content -->
 <div class="main-content">
@@ -337,10 +464,106 @@
 
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Font Awesome for icons -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+<style>
+    .status-notifications-banner {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 1rem 0;
+        border-bottom: 3px solid #ffd700;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .notifications-container {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .notification-item {
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .notification-item .alert-success {
+        background: rgba(25, 135, 84, 0.15);
+        border-left: 4px solid #198754;
+        color: #d1e7dd;
+    }
+
+    .notification-item .alert-info {
+        background: rgba(13, 202, 240, 0.15);
+        border-left: 4px solid #0dcaf0;
+        color: #cff4fc;
+    }
+
+    .notification-item .alert-warning {
+        background: rgba(255, 193, 7, 0.15);
+        border-left: 4px solid #ffc107;
+        color: #fff3cd;
+    }
+
+    .notification-item .alert-primary {
+        background: rgba(13, 110, 253, 0.15);
+        border-left: 4px solid #0d6efd;
+        color: #cfe2ff;
+    }
+
+    .notification-item strong {
+        font-weight: 600;
+    }
+
+    .btn-close-white {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    /* Scrollbar styling for notifications container */
+    .notifications-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .notifications-container::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+    }
+
+    .notifications-container::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+    }
+
+    .notifications-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Ensure proper spacing when banner is present */
+    .main-content {
+        margin-top: 0;
+    }
+</style>
+
 <script>
-    // Show modals based on status flags
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize all Bootstrap modals first
+        // Close notifications banner
+        document.getElementById('closeNotificationsBanner')?.addEventListener('click', function() {
+            document.querySelector('.status-notifications-banner').style.display = 'none';
+        });
+
+        // Auto-hide notifications after 30 seconds
+        setTimeout(() => {
+            const banner = document.querySelector('.status-notifications-banner');
+            if (banner) {
+                banner.style.opacity = '0';
+                banner.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => banner.style.display = 'none', 500);
+            }
+        }, 30000);
+
+        // Your existing modal and toggle button code
         const modals = [
             @if(Auth::user()->top_up_mail) new bootstrap.Modal(document.getElementById('topUpMailModal')), @endif
             @if(Auth::user()->notification_status) new bootstrap.Modal(document.getElementById('notificationStatusModal')), @endif
@@ -355,7 +578,7 @@
         modals.forEach((modal, index) => {
             setTimeout(() => {
                 modal.show();
-            }, index * 300); // 300ms delay between modals
+            }, index * 300);
         });
 
         // Your existing toggle button code

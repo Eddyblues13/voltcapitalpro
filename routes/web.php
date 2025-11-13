@@ -233,7 +233,7 @@ Route::prefix('admin')->group(function () {    // Protecting admin routes using 
 
         // AJAX actions
         Route::post('/client/{user}/topup', [App\Http\Controllers\Admin\ManageUserController::class, 'topup'])->name('admin.topup');
-        Route::post('/client/{user}/paid-register-fee', [App\Http\Controllers\Admin\ManageUserController::class, 'paidRegisterFee'])->name('admin.paid-register-fee');
+        Route::post('/client/{user}/paid-register-fee', [App\Http\Controllers\Admin\ManageUserController::class, 'paidRegisterFee'])->name('admin.paid-register-fee'); 
         Route::post('/client/{user}/on-notify', [App\Http\Controllers\Admin\ManageUserController::class, 'onNotify'])->name('admin.on-notify');
         Route::post('/client/{user}/on-topup', [App\Http\Controllers\Admin\ManageUserController::class, 'onTopup'])->name('admin.on-topup');
         Route::post('/client/{user}/on-sub', [App\Http\Controllers\Admin\ManageUserController::class, 'onSub'])->name('admin.on-sub');
