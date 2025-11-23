@@ -7,8 +7,13 @@ use App\Models\User\Profit;
 use App\Models\User\Deposit;
 use Illuminate\Http\Request;
 use App\Models\TradingHistory;
+use App\Models\User\MiningBalance;
 use Illuminate\Support\Facades\DB;
+use App\Models\User\HoldingBalance;
+use App\Models\User\StakingBalance;
+use App\Models\User\TradingBalance;
 use App\Http\Controllers\Controller;
+use App\Models\User\ReferralBalance;
 use Illuminate\Support\Facades\Auth;
 
 class CopiedTradeController extends Controller
@@ -87,16 +92,18 @@ class CopiedTradeController extends Controller
             // Get trader's minimum amount requirement
             $trader = Trader::findOrFail($validated['trader_id']);
             $minAmount = $trader->min_portfolio ?? 0; // Assuming traders have min_amount column
+            // Check available balance
+            $currentBalance = $this->getAccountBalance();
 
             // Check if amount meets trader's minimum
-            if ($validated['amount'] < $minAmount) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Account portfolio is low you need a mini of USD' .
-                        number_format($minAmount, 0) .
-                        ' to be able to copy this trader'
-                ], 400);
-            }
+            // if ($validated['amount'] < $minAmount) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Account portfolio is low you need a mini of USD' .
+            //             number_format($minAmount, 0) .
+            //             ' to be able to copy this trader'
+            //     ], 400);
+            // }
 
             // Check available balance
             $currentBalance = $this->getAccountBalance();
@@ -142,13 +149,43 @@ class CopiedTradeController extends Controller
     {
         $user = Auth::user();
 
+        // Deposit balance (approved only)
         $depositBalance = Deposit::where('user_id', $user->id)
             ->where('status', 'approved')
             ->sum('amount') ?? 0;
 
-        $profit = Profit::where('user_id', $user->id)
+        // Profit balance
+        $profitBalance = Profit::where('user_id', $user->id)
             ->sum('amount') ?? 0;
 
-        return $depositBalance + $profit;
+        // Holding balance
+        $holdingBalance = HoldingBalance::where('user_id', $user->id)
+            ->sum('amount') ?? 0;
+
+        // Mining balance
+        $miningBalance = MiningBalance::where('user_id', $user->id)
+            ->sum('amount') ?? 0;
+
+        // Referral balance
+        $referralBalance = ReferralBalance::where('user_id', $user->id)
+            ->sum('amount') ?? 0;
+
+        // Staking balance
+        $stakingBalance = StakingBalance::where('user_id', $user->id)
+            ->sum('amount') ?? 0;
+
+        // Trading balance
+        $tradingBalance = TradingBalance::where('user_id', $user->id)
+            ->sum('amount') ?? 0;
+
+        // Total sum
+        return
+            $depositBalance +
+            $profitBalance +
+            $holdingBalance +
+            $miningBalance +
+            $referralBalance +
+            $stakingBalance +
+            $tradingBalance;
     }
 }
