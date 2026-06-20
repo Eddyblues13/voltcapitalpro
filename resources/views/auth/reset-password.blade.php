@@ -13,7 +13,7 @@
     <meta name="google" content="noindex, nofollow">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Volt Capital Pro - Reset Password</title>
+    <title>Volt Options - Reset Password</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link

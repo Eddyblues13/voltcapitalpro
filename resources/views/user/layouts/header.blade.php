@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volt Capital Pro</title>
+    <title>Volt Options</title>
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
     <meta name="bingbot" content="noindex, nofollow">
@@ -60,7 +60,7 @@ if(w.chaport)return;v3=w.chaport={};v3._q=[];v3._l={};v3.q=function(){v3._q.push
                 data-bs-target="#sidebar" aria-controls="sidebarMenu">
                 <i class="bi bi-list"></i>
             </button>
-            <div class="mt-1"><a href="#" class="text-decoration-none text-white">Volt Capital Pro</a></div>
+            <div class="mt-1"><a href="#" class="text-decoration-none text-white">Volt Options</a></div>
         </div>
 
         <div>{{Auth::user()->first_name}}

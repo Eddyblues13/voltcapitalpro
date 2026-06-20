@@ -4,7 +4,7 @@
         <h1 class="cookie-policy-page-title">Cookie Policy</h1>
         <div class="cookie-policy-content-section section">
             <p class="cookie-policy-section-text">
-                Volt Capital Pro uses cookies to:
+                Volt Options uses cookies to:
             </p>
             <ul class="cookie-policy-section-list">
                 <li>Optimize your trading experience, including remembering your preferences, location, preferred
@@ -26,11 +26,11 @@
 
             <h5 class="cookie-policy-section-title">Managing Cookies</h5>
             <p class="cookie-policy-section-text">
-                At Volt Capital Pro, we respect your right to privacy and are therefore happy to provide you with
+                At Volt Options, we respect your right to privacy and are therefore happy to provide you with
                 tools to
                 manage the cookies you receive from our web services. Some cookies are essential to the performance of
                 our platform (you cannot opt out from these cookies if you wish to use our platform). Below you will
-                find a list of some of the third-party cookies used by Volt Capital Pro. For those users who
+                find a list of some of the third-party cookies used by Volt Options. For those users who
                 would prefer
                 not to receive non-essential cookies, we have provided an “opt out” option for you to select.
             </p>

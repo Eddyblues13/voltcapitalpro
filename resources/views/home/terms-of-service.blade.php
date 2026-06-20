@@ -5,10 +5,10 @@
         <div class="terms-of-service-content-section section">
             <p class="terms-of-service-section-text">
                 This Agreement is entered into by and these Terms & Conditions (hereinafter referred to as the
-                “Agreement”) shall regulate the relationship between Volt Capital Pro LTD, (hereinafter referred
+                “Agreement”) shall regulate the relationship between Volt Options LTD, (hereinafter referred
                 to as the
                 “Company”), and the user (a natural or legal entity) (hereinafter referred to as the “Client”) of
-                Volt Capital Pro (hereinafter referred as the “Website”).
+                Volt Options (hereinafter referred as the “Website”).
             </p>
 
             <p class="terms-of-service-section-text">
@@ -48,7 +48,7 @@
 
             <p class="terms-of-service-section-text">
                 A client that is a legal entity can register with the Company not through the Website but by sending an
-                email with its request to <a href="mailto:support@voltcapitalpro.live">support@voltcapitalpro.live</a>.
+                email with its request to <a href="mailto:support@voltoptions.live">support@voltoptions.live</a>.
                 All
                 terms and conditions contained herein, including without limitation to sections 1 to 5 above, shall at
                 all times be applicable to the Legal Entity, and the latter shall conform with such terms and
@@ -840,7 +840,7 @@
                 <li>It is prohibited to abuse any of the privileges provided by the Company (e.g., creating multiple
                     trading accounts to claim these Benefits).</li>
                 <li>The client may submit a request to <a
-                        href="mailto:support@voltcapitalpro.live">support@voltcapitalpro.live</a> to stop
+                        href="mailto:support@voltoptions.live">support@voltoptions.live</a> to stop
                     receiving such
                     Benefits at any time.</li>
             </ul>

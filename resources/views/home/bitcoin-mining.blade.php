@@ -342,7 +342,7 @@
             <p class="bitcoin-mining-section-text">
                 Note, though, that when you’re outsourcing your mining activity to a cloud mining provider, you will
                 take a degree of risk. You hand over almost all control to the cloud mining vendor. That's why you
-                should choose only reputable cloud mining providers like <strong>Volt Capital Pro</strong>.
+                should choose only reputable cloud mining providers like <strong>Volt Options</strong>.
             </p>
         </div>
     </div>

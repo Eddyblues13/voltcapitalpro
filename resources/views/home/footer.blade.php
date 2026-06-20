@@ -1,6 +1,6 @@
 <footer class="footer mx-2">
   <div class="footer-content">
-    <div class="brand">Volt Capital Pro</div>
+    <div class="brand">Volt Options</div>
 
     <div class="row">
       <div class="col-6 col-md-4 mb-5">
@@ -27,10 +27,10 @@
     </div>
 
     <div class="footer-bottom">
-      <div class="copyright">Copyright © 2019 by Volt Capital Pro</div>
+      <div class="copyright">Copyright © 2019 by Volt Options</div>
     </div>
   </div>
-{{-- 
+  {{--
   <!-- Begin of Chaport Live Chat code -->
   <script type="text/javascript">
     (function(w,d,v3){

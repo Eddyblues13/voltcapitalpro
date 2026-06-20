@@ -160,14 +160,14 @@
 
 <footer class="footer">
     <div class="footer-content">
-        <div class="brand">Volt Capital Pro</div>
+        <div class="brand">Volt Options</div>
         <h2 class="heading">
             Build your wealth with<br>
             <span class="gradient-crypto">cryptocurrencies</span>
             <span class="gradient-step">step by step.</span>
         </h2>
         <div class="footer-bottom">
-            <div class="copyright">Copyright © 2019 by Volt Capital Pro</div>
+            <div class="copyright">Copyright © 2019 by Volt Options</div>
             <a href="#" class="terms">Terms and Conditions</a>
         </div>
     </div>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volt Capital Pro - Learn to Invest</title>
+    <title>Volt Options - Learn to Invest</title>
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
     <meta name="bingbot" content="noindex, nofollow">
@@ -59,7 +59,7 @@ if(w.chaport)return;v3=w.chaport={};v3._q=[];v3._l={};v3.q=function(){v3._q.push
         <div class="container">
             <a class="navbar-brand" href="/">
                 <div class="brand-icon"><img src="assets/img/android-chrome-36x36.png" alt=""></div>
-                Volt Capital Pro
+                Volt Options
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
                 aria-controls="sidebarMenu">

@@ -4,7 +4,7 @@
         <h1 class="crypto-trading-page-title">Crypto Trading</h1>
         <div class="crypto-trading-content-section section">
             <p class="crypto-trading-section-text">
-                Volt Capital Pro is excited to announce the launch of our new cryptocurrency trading platform.
+                Volt Options is excited to announce the launch of our new cryptocurrency trading platform.
                 Now you can
                 start trading Bitcoin, Ethereum, and many more cryptocurrencies quickly, easily, and safely from
                 wherever you are — in just seconds. You get great margin trading leverage and short sell options with
