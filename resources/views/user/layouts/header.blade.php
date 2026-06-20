@@ -23,9 +23,26 @@
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
+    {{--
     <!-- Smartsupp Live Chat script -->
-<script type=”text/javascript”>
-var _smartsupp = _smartsupp || {};
+    <script type="text/javascript">
+        var _smartsupp = _smartsupp || {};
+_smartsupp.key = '4da9310e3df49b0e6f1ef005a6d97e13077580d2';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+    </script>
+    <noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript>
+    --}}
+
+
+    <!-- Begin of Chaport Live Chat code -->
+    <!-- Smartsupp Live Chat script -->
+    <script type="text/javascript">
+        var _smartsupp = _smartsupp || {};
 _smartsupp.key = 'd0ce89a4f04d5b5bbbe2c03c20b28c57c36541a0';
 window.smartsupp||(function(d) {
   var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
@@ -33,8 +50,9 @@ window.smartsupp||(function(d) {
   c.type='text/javascript';c.charset='utf-8';c.async=true;
   c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
 })(document);
-</script>
-<noscript>Powered by <a href=”https://www.smartsupp.com” target=”_blank”>Smartsupp</a></noscript>
+    </script>
+    <noscript>Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
+
 
 </head>
 
