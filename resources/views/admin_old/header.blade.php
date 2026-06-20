@@ -106,11 +106,18 @@
 
         <!--/PayPal-->
 
-        <!--Start of Tawk.to Script-->
-        <script type="text/javascript">
-            {tawk to codess}
-        </script>
-        <!--End of Tawk.to Script-->
+        <!-- Smartsupp Live Chat script -->
+<script type="text/javascript">
+var _smartsupp = _smartsupp || {};
+_smartsupp.key = 'd0ce89a4f04d5b5bbbe2c03c20b28c57c36541a0';
+window.smartsupp||(function(d) {
+  var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
+  s=d.getElementsByTagName('script')[0];c=d.createElement('script');
+  c.type='text/javascript';c.charset='utf-8';c.async=true;
+  c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
+})(document);
+</script>
+<noscript>Powered by <a href="https://www.smartsupp.com" target="_blank">Smartsupp</a></noscript>
         <div class="wrapper">
             <div class="main-header">
                 <!-- Logo Header -->
