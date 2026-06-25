@@ -3,6 +3,26 @@
 
 <!-- Main Content -->
 <div class="mx-3 my-4">
+    <!-- Balance Card -->
+    <div class="dashboard-balance-card mb-3">
+        <div class="d-flex justify-content-between">
+            <div>
+                <div class="dashboard-balance-amount small-amount">{{ config('currencies.' . Auth::user()->currency, '$') }}{{ number_format($accountBalance, 1) }}</div>
+                <div class="dashboard-balance-label text-white">ACCOUNT BALANCE</div>
+            </div>
+            <div>
+                <div class="dashboard-balance-amount small-amount">{{ config('currencies.' . Auth::user()->currency, '$') }}{{ number_format($profit, 1) }}</div>
+                <div class="dashboard-balance-label text-white">PROFIT BALANCE</div>
+            </div>
+        </div>
+        <div class="signal-strength">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ Auth::user()->signal_strength }}%;"></div>
+            </div>
+            <div class="signal-label">SIGNAL STRENGTH ({{ Auth::user()->signal_strength }}%)</div>
+        </div>
+    </div>
+
     <!-- Notification (only shown if session flag is set) -->
     @if(session('show_notification'))
     <div class="notification" id="withdrawal-notification">

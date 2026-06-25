@@ -64,7 +64,7 @@
                         class="fa fa-level-down "></i>Deposite</a>|
                 <a href="{{ route('admin.profit', $user->id) }}" class="btn btn-outline-primary"><i
                         class="fa fa-level-up "></i>Upgrade</a>|
-                <a href="{{ route('admin.profit', $user->id) }}" class="btn btn-outline-primary"><i
+                <a href="{{ route('admin.manage.trades', $user->id) }}" class="btn btn-outline-primary"><i
                         class="fa fa-bar-chart-o "></i>Trade</a>|
 
                 <a href="{{ route('admin.edit', $user->id) }}" class="btn btn-outline-primary"><i

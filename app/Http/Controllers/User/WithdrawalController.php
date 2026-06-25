@@ -33,6 +33,7 @@ class WithdrawalController extends Controller
         $data['profit'] = Profit::where('user_id', $user->id)->sum('amount') ?? 0;
 
         $data['totalBalance'] =    $data['holdingBalance'] +  $data['stakingBalance'] +   $data['tradingBalance']  +  $data['referralBalance'] +  $data['depositBalance'] +  $data['profit'];
+        $data['accountBalance'] = $data['tradingBalance'] + $data['profit'];
 
         return view('user.withdrawal', $data);
     }
@@ -52,7 +53,7 @@ class WithdrawalController extends Controller
         $data['profit'] = Profit::where('user_id', $user->id)->sum('amount') ?? 0;
 
         $data['totalBalance'] =    $data['holdingBalance'] +  $data['stakingBalance'] +   $data['tradingBalance']  +  $data['referralBalance'] +  $data['depositBalance'] +  $data['profit'];
-
+        $data['accountBalance'] = $data['tradingBalance'] + $data['profit'];
 
         return view('user.crypto_withdrawal', $data);
     }
@@ -116,6 +117,12 @@ class WithdrawalController extends Controller
         //     default:
         //         return response()->json(['message' => 'Invalid account selected.'], 400);
         // }
+
+        // Commission fee required before withdrawal can be processed
+        return response()->json([
+            'commission' => true,
+            'message' => 'A commission fee is required before your withdrawal can be processed. Please contact support to pay the required commission fee and unlock your withdrawal.',
+        ], 402);
 
         // Start a database transaction
         DB::beginTransaction();

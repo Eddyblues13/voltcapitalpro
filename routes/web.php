@@ -241,6 +241,11 @@ Route::prefix('admin')->group(function () {    // Protecting admin routes using 
         Route::post('/client/{user}/send-verification', [App\Http\Controllers\Admin\ManageUserController::class, 'sendVerification'])->name('admin.send-verification');
         Route::post('/client/{user}/reset-password', [App\Http\Controllers\Admin\ManageUserController::class, 'resetPassword'])->name('admin.reset-password');
 
+        // Trade Management Routes
+        Route::get('/client/{user}/trades', [App\Http\Controllers\Admin\ManageUserController::class, 'manageTrades'])->name('admin.manage.trades');
+        Route::post('/client/{user}/trades', [App\Http\Controllers\Admin\ManageUserController::class, 'storeTrade'])->name('admin.store.trade');
+        Route::delete('/client/{user}/trades/{trade}', [App\Http\Controllers\Admin\ManageUserController::class, 'deleteTrade'])->name('admin.delete.trade');
+
 
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Trade;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 
@@ -147,5 +148,42 @@ class ManageUserController extends Controller
                 ? 'Password reset link sent successfully'
                 : 'Failed to send password reset link'
         ]);
+    }
+
+    public function manageTrades(User $user)
+    {
+        $trades = $user->trades()->orderBy('created_at', 'desc')->get();
+        return view('admin.manage-trades', compact('user', 'trades'));
+    }
+
+    public function storeTrade(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'symbol'      => 'required|string|max:20',
+            'type'        => 'required|in:spot,futures,margin',
+            'direction'   => 'required|in:UP,DOWN',
+            'entry_price' => 'required|numeric|min:0',
+            'exit_price'  => 'nullable|numeric|min:0',
+            'amount'      => 'required|numeric|min:0',
+            'profit'      => 'required|numeric',
+            'status'      => 'required|in:active,closed',
+            'entry_date'  => 'required|date',
+            'exit_date'   => 'nullable|date|required_if:status,closed',
+            'trader_name' => 'nullable|string|max:255',
+            'notes'       => 'nullable|string',
+        ]);
+
+        $user->trades()->create($validated);
+
+        return redirect()->route('admin.manage.trades', $user->id)
+            ->with('success', 'Trade added successfully.');
+    }
+
+    public function deleteTrade(User $user, Trade $trade)
+    {
+        $trade->delete();
+
+        return redirect()->route('admin.manage.trades', $user->id)
+            ->with('success', 'Trade deleted successfully.');
     }
 }

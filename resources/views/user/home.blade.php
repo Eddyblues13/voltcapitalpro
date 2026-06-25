@@ -347,7 +347,7 @@ Auth::user()->top_up_status || Auth::user()->subscription_status)
             <div class="trades-card">
                 <!-- Toggle Buttons -->
                 <div class="trades-toggle px-5">
-                    <button class="toggle-button active" data-type="closed">
+                    <button class="toggle-button" data-type="closed">
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                                 fill="#0287df">
@@ -358,7 +358,7 @@ Auth::user()->top_up_status || Auth::user()->subscription_status)
                         Closed
                     </button>
 
-                    <button class="toggle-button" data-type="active">
+                    <button class="toggle-button active" data-type="active">
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                                 fill="#0287df">

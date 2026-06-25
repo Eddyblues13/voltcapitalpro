@@ -123,7 +123,7 @@ class User extends Authenticatable
 
     public function trades()
     {
-        return $this->hasOne(Trade::class);
+        return $this->hasMany(Trade::class);
     }
 
 
