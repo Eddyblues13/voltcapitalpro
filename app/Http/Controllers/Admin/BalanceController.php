@@ -240,24 +240,24 @@ class BalanceController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'amount' => 'required|numeric|min:0',
-            'type' => 'required|in:profit,loss'
+            'amount'  => 'required|numeric|min:0.01',
+            'type'    => 'required|in:profit,loss',
         ]);
 
-
-
-        // Get or create profit balance
-        $profitBalance = \App\Models\User\Profit::firstOrCreate(
+        $profitBalance = Profit::firstOrCreate(
             ['user_id' => $request->user_id],
             ['amount' => 0]
         );
 
-        // Adjust balance
-        $request->type === 'profit'
-            ? $profitBalance->increment('amount', $request->amount)
-            : $profitBalance->decrement('amount', $request->amount);
+        if ($request->type === 'profit') {
+            $profitBalance->increment('amount', $request->amount);
+        } else {
+            $profitBalance->decrement('amount', $request->amount);
+        }
 
-        return redirect()->back()->with('success', 'Profit recorded successfully.');
+        return redirect()
+            ->route('admin.profit', $request->user_id)
+            ->with('success', 'Profit updated successfully for user #' . $request->user_id . '.');
     }
 
 

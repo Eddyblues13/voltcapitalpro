@@ -18,11 +18,11 @@ class ManageUserController extends Controller
 
     public function showClient(User $user)
     {
-        $user->load(['holdingBalance', 'profitBalance', 'referralBalance']);
+        $user->load(['holdingBalance', 'profitBalance', 'referralBalance', 'tradingBalance']);
 
-        // Calculate account balance and profit
-        $accountBalance = $user->holdingBalance ? $user->holdingBalance->balance : 0;
-        $profit = $user->profitBalance ? $user->profitBalance->balance : 0;
+        $tradingBalance = $user->tradingBalance ? $user->tradingBalance->amount : 0;
+        $profit = $user->profitBalance ? $user->profitBalance->amount : 0;
+        $accountBalance = $tradingBalance + $profit;
 
         return view('admin.user-details', compact('user', 'accountBalance', 'profit'));
     }
