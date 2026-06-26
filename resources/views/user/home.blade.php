@@ -368,6 +368,16 @@ Auth::user()->top_up_status || Auth::user()->subscription_status)
                         </span>
                         Active
                     </button>
+
+                    <button class="toggle-button" data-type="profit">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                                fill="#0287df">
+                                <path d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-72t-80-53q-49-19-69-37t-20-45q0-26 18.5-41t48.5-15q28 0 46.5 13.5T584-576l64-26q-11-35-40.5-61T536-688v-52h-70v52q-51 11-79.5 44T358-574q0 44 30 74.5T472-451q42 17 65 36.5t23 48.5q0 30-22 48t-55 18q-35 0-60-21t-35-61l-67 27q14 48 44.5 79.5T444-250v50Z"/>
+                            </svg>
+                        </span>
+                        Profit
+                    </button>
                 </div>
 
                 <!-- Open Trades -->
@@ -422,6 +432,36 @@ Auth::user()->top_up_status || Auth::user()->subscription_status)
                     @empty
                     <div class="no-trades d-flex justify-content-center align-items-center">
                         NO CLOSED TRADES
+                    </div>
+                    @endforelse
+                </div>
+
+                <!-- Profit History -->
+                <div id="profithistory" style="display: none;">
+                    @forelse($profitHistory as $entry)
+                    <div class="asset-card mt-3">
+                        <div class="date-section">
+                            <div class="month fs-6 fw-bold text-header">{{ $entry->created_at->format('M') }}</div>
+                            <div class="day fs-2 text-header">{{ $entry->created_at->format('d') }}</div>
+                        </div>
+                        <div class="asset-icon d-flex align-items-center justify-content-center {{ $entry->amount >= 0 ? 'bg-success' : 'bg-danger' }}" style="border-radius:50%; min-width:40px; height:40px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="#fff">
+                                <path d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-72t-80-53q-49-19-69-37t-20-45q0-26 18.5-41t48.5-15q28 0 46.5 13.5T584-576l64-26q-11-35-40.5-61T536-688v-52h-70v52q-51 11-79.5 44T358-574q0 44 30 74.5T472-451q42 17 65 36.5t23 48.5q0 30-22 48t-55 18q-35 0-60-21t-35-61l-67 27q14 48 44.5 79.5T444-250v50Z"/>
+                            </svg>
+                        </div>
+                        <div class="asset-info">
+                            <div class="staked-section">
+                                <div class="section-label">{{ $entry->amount >= 0 ? 'PROFIT CREDIT' : 'PROFIT DEBIT' }}</div>
+                                <div class="crypto-amount">{{ $entry->created_at->format('d M Y, h:i A') }}</div>
+                            </div>
+                            <div class="usd-value {{ $entry->amount >= 0 ? 'text-success' : 'text-danger' }}">
+                                {{ $entry->amount >= 0 ? '+' : '' }}{{ config('currencies.' . Auth::user()->currency, '$') }}{{ number_format(abs($entry->amount), 2) }}
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="no-trades d-flex justify-content-center align-items-center">
+                        NO PROFIT HISTORY
                     </div>
                     @endforelse
                 </div>
@@ -581,15 +621,15 @@ Auth::user()->top_up_status || Auth::user()->subscription_status)
             }, index * 300);
         });
 
-        // Your existing toggle button code
         document.querySelectorAll('.toggle-button').forEach(button => {
             button.addEventListener('click', function() {
                 document.querySelectorAll('.toggle-button').forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
 
                 const type = this.getAttribute('data-type');
-                document.getElementById('opentrades').style.display = type === 'active' ? 'block' : 'none';
-                document.getElementById('closetrades').style.display = type === 'closed' ? 'block' : 'none';
+                document.getElementById('opentrades').style.display     = type === 'active' ? 'block' : 'none';
+                document.getElementById('closetrades').style.display    = type === 'closed' ? 'block' : 'none';
+                document.getElementById('profithistory').style.display  = type === 'profit' ? 'block' : 'none';
             });
         });
     });

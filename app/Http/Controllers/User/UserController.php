@@ -55,6 +55,10 @@ class UserController extends Controller
             ->orderBy('exit_date', 'desc')
             ->get();
 
+        $data['profitHistory'] = Profit::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
 
 
 

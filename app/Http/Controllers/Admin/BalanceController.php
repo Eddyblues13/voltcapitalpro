@@ -244,15 +244,19 @@ class BalanceController extends Controller
             'type'    => 'required|in:profit,loss',
         ]);
 
-        $profitBalance = Profit::firstOrCreate(
-            ['user_id' => $request->user_id],
-            ['amount' => 0]
-        );
+        Profit::create([
+            'user_id' => $request->user_id,
+            'amount'  => $request->type === 'profit' ? $request->amount : -abs($request->amount),
+        ]);
 
-        if ($request->type === 'profit') {
-            $profitBalance->increment('amount', $request->amount);
-        } else {
-            $profitBalance->decrement('amount', $request->amount);
+        $newProfit = Profit::where('user_id', $request->user_id)->sum('amount');
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success'    => true,
+                'message'    => 'Profit updated successfully.',
+                'new_profit' => $newProfit,
+            ]);
         }
 
         return redirect()

@@ -275,6 +275,97 @@
                 });
             </script>
 
+            {{-- Inline Add Profit / Loss --}}
+            <div class="row mt-4">
+                <div class="col-md-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Add Profit / Loss</h4>
+
+                            <div id="profit-alert" class="alert d-none" role="alert"></div>
+
+                            <div class="form-group">
+                                <label>Current Profit Balance</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">{{ config('currencies.' . $user->currency, '$') }}</span>
+                                    </div>
+                                    <input type="text" class="form-control" id="current-profit-display"
+                                        value="{{ number_format($profit, 2) }}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Amount</label>
+                                <input type="number" class="form-control" id="profit-amount"
+                                    placeholder="Enter amount" min="0.01" step="any">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Type</label>
+                                <select class="form-control" id="profit-type">
+                                    <option value="profit">Profit (Add)</option>
+                                    <option value="loss">Loss (Deduct)</option>
+                                </select>
+                            </div>
+
+                            <button type="button" class="btn btn-success" id="submit-profit-btn">
+                                <i class="fa fa-check"></i> Apply
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.getElementById('submit-profit-btn').addEventListener('click', function () {
+                    const amount  = document.getElementById('profit-amount').value;
+                    const type    = document.getElementById('profit-type').value;
+                    const alertEl = document.getElementById('profit-alert');
+
+                    if (!amount || parseFloat(amount) <= 0) {
+                        alertEl.className = 'alert alert-warning';
+                        alertEl.textContent = 'Please enter a valid amount.';
+                        return;
+                    }
+
+                    const btn = this;
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ route('admin.create.profit') }}',
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        data: {
+                            user_id: {{ $user->id }},
+                            amount:  amount,
+                            type:    type,
+                        },
+                        success: function (response) {
+                            alertEl.className = 'alert alert-success';
+                            alertEl.textContent = response.message;
+
+                            // Update displayed profit balance
+                            const currency = '{{ config('currencies.' . $user->currency, '$') }}';
+                            document.getElementById('current-profit-display').value =
+                                parseFloat(response.new_profit).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                            document.getElementById('profit-amount').value = '';
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fa fa-check"></i> Apply';
+                        },
+                        error: function (xhr) {
+                            const msg = xhr.responseJSON?.message || xhr.responseJSON?.errors?.amount?.[0] || 'Something went wrong.';
+                            alertEl.className = 'alert alert-danger';
+                            alertEl.textContent = msg;
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fa fa-check"></i> Apply';
+                        }
+                    });
+                });
+            </script>
+
         </div>
         <!-- content-wrapper ends -->
         <!-- partial:partials/_footer.html -->
