@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Trade;
+use App\Models\User\Profit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 
@@ -32,9 +33,13 @@ class ManageUserController extends Controller
         return view('admin.deposit-user', ['userId' => $userId]);
     }
 
-    public function profit($userId)
+    public function profit(User $user)
     {
-        return view('admin.add-profit', ['userId' => $userId]);
+        $profitHistory = Profit::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $currentProfit = $profitHistory->sum('amount');
+        return view('admin.add-profit', compact('user', 'profitHistory', 'currentProfit'));
     }
 
     public function upgrade(User $user)

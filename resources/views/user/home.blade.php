@@ -346,13 +346,11 @@ Auth::user()->top_up_status || Auth::user()->subscription_status)
         <div class="col-md-6 col-12">
             <div class="trades-card">
                 <!-- Toggle Buttons -->
-                <div class="trades-toggle px-5">
+                <div class="trades-toggle px-3 flex-wrap">
                     <button class="toggle-button" data-type="closed">
                         <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                fill="#0287df">
-                                <path
-                                    d="M320-160h320v-120q0-66-47-113t-113-47q-66 0-113 47t-47 113v120Zm160-360q66 0 113-47t47-113v-120H320v120q0 66 47 113t113 47ZM160-80v-80h80v-120q0-61 28.5-114.5T348-480q-51-32-79.5-85.5T240-680v-120h-80v-80h640v80h-80v120q0 61-28.5 114.5T612-480q51 32 79.5 85.5T720-280v120h80v80H160Z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="#0287df">
+                                <path d="M320-160h320v-120q0-66-47-113t-113-47q-66 0-113 47t-47 113v120Zm160-360q66 0 113-47t47-113v-120H320v120q0 66 47 113t113 47ZM160-80v-80h80v-120q0-61 28.5-114.5T348-480q-51-32-79.5-85.5T240-680v-120h-80v-80h640v80h-80v120q0 61-28.5 114.5T612-480q51 32 79.5 85.5T720-280v120h80v80H160Z"/>
                             </svg>
                         </span>
                         Closed
@@ -360,27 +358,15 @@ Auth::user()->top_up_status || Auth::user()->subscription_status)
 
                     <button class="toggle-button active" data-type="active">
                         <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                fill="#0287df">
-                                <path
-                                    d="M320-160h320v-120q0-66-47-113t-113-47q-66 0-113 47t-47 113v120ZM160-80v-80h80v-120q0-61 28.5-114.5T348-480q-51-32-79.5-85.5T240-680v-120h-80v-80h640v80h-80v120q0 61-28.5 114.5T612-480q51 32 79.5 85.5T720-280v120h80v80H160Z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="#0287df">
+                                <path d="M320-160h320v-120q0-66-47-113t-113-47q-66 0-113 47t-47 113v120ZM160-80v-80h80v-120q0-61 28.5-114.5T348-480q-51-32-79.5-85.5T240-680v-120h-80v-80h640v80h-80v120q0 61-28.5 114.5T612-480q51 32 79.5 85.5T720-280v120h80v80H160Z"/>
                             </svg>
                         </span>
                         Active
                     </button>
-
-                    <button class="toggle-button" data-type="profit">
-                        <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                fill="#0287df">
-                                <path d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-72t-80-53q-49-19-69-37t-20-45q0-26 18.5-41t48.5-15q28 0 46.5 13.5T584-576l64-26q-11-35-40.5-61T536-688v-52h-70v52q-51 11-79.5 44T358-574q0 44 30 74.5T472-451q42 17 65 36.5t23 48.5q0 30-22 48t-55 18q-35 0-60-21t-35-61l-67 27q14 48 44.5 79.5T444-250v50Z"/>
-                            </svg>
-                        </span>
-                        Profit
-                    </button>
                 </div>
 
-                <!-- Open Trades -->
+                <!-- Open Trades + Profit History (Active tab) -->
                 <div id="opentrades">
                     @forelse($openTrades as $trade)
                     <div class="asset-card mt-3">
@@ -391,9 +377,7 @@ Auth::user()->top_up_status || Auth::user()->subscription_status)
                         <img src="{{ $trade->symbol_icon }}" alt="{{ $trade->symbol }}" class="asset-icon bg-primary">
                         <div class="asset-info">
                             <div class="staked-section">
-                                <div class="section-label">{{ strtoupper($trade->direction) }} {{
-                                    $trade->formattedAmount }}
-                                    {{ $trade->symbol }}</div>
+                                <div class="section-label">{{ strtoupper($trade->direction) }} {{ $trade->formattedAmount }} {{ $trade->symbol }}</div>
                                 <div class="crypto-amount">{{ $trade->trader_name ?? 'N/A' }}</div>
                             </div>
                             <div class="usd-value {{ $trade->profit >= 0 ? 'text-success' : 'text-danger' }}">
@@ -402,10 +386,44 @@ Auth::user()->top_up_status || Auth::user()->subscription_status)
                         </div>
                     </div>
                     @empty
-                    <div class="no-trades d-flex justify-content-center align-items-center">
-                        NO OPEN TRADES
-                    </div>
                     @endforelse
+
+                    @if($profitHistory->isNotEmpty())
+                        @if($openTrades->isNotEmpty())
+                        <div class="px-3 py-2 mt-3" style="border-top:1px solid rgba(255,255,255,0.1);">
+                            <small class="text-muted text-uppercase" style="letter-spacing:.08em;">Profit History</small>
+                        </div>
+                        @endif
+
+                        @foreach($profitHistory as $entry)
+                        <div class="asset-card mt-3">
+                            <div class="date-section">
+                                <div class="month fs-6 fw-bold text-header">{{ $entry->created_at->format('M') }}</div>
+                                <div class="day fs-2 text-header">{{ $entry->created_at->format('d') }}</div>
+                            </div>
+                            <div class="asset-icon d-flex align-items-center justify-content-center {{ $entry->amount >= 0 ? 'bg-success' : 'bg-danger' }}" style="border-radius:50%; min-width:42px; height:42px; flex-shrink:0;">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#fff">
+                                    <path d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-72t-80-53q-49-19-69-37t-20-45q0-26 18.5-41t48.5-15q28 0 46.5 13.5T584-576l64-26q-11-35-40.5-61T536-688v-52h-70v52q-51 11-79.5 44T358-574q0 44 30 74.5T472-451q42 17 65 36.5t23 48.5q0 30-22 48t-55 18q-35 0-60-21t-35-61l-67 27q14 48 44.5 79.5T444-250v50Z"/>
+                                </svg>
+                            </div>
+                            <div class="asset-info">
+                                <div class="staked-section">
+                                    <div class="section-label">{{ $entry->amount >= 0 ? 'PROFIT CREDIT' : 'PROFIT DEBIT' }}</div>
+                                    <div class="crypto-amount">{{ $entry->created_at->format('d M Y, h:i A') }}</div>
+                                </div>
+                                <div class="usd-value {{ $entry->amount >= 0 ? 'text-success' : 'text-danger' }}">
+                                    {{ $entry->amount >= 0 ? '+' : '-' }}{{ config('currencies.' . Auth::user()->currency, '$') }}{{ number_format(abs($entry->amount), 2) }}
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    @endif
+
+                    @if($openTrades->isEmpty() && $profitHistory->isEmpty())
+                    <div class="no-trades d-flex justify-content-center align-items-center">
+                        NO ACTIVE TRADES
+                    </div>
+                    @endif
                 </div>
 
                 <!-- Closed Trades -->
@@ -419,9 +437,7 @@ Auth::user()->top_up_status || Auth::user()->subscription_status)
                         <img src="{{ $trade->symbol_icon }}" alt="{{ $trade->symbol }}" class="asset-icon bg-primary">
                         <div class="asset-info">
                             <div class="staked-section">
-                                <div class="section-label">{{ strtoupper($trade->direction) }} {{
-                                    $trade->formattedAmount }}
-                                    {{ $trade->symbol }}</div>
+                                <div class="section-label">{{ strtoupper($trade->direction) }} {{ $trade->formattedAmount }} {{ $trade->symbol }}</div>
                                 <div class="crypto-amount">{{ $trade->trader_name ?? 'N/A' }}</div>
                             </div>
                             <div class="usd-value {{ $trade->profit >= 0 ? 'text-success' : 'text-danger' }}">
@@ -432,36 +448,6 @@ Auth::user()->top_up_status || Auth::user()->subscription_status)
                     @empty
                     <div class="no-trades d-flex justify-content-center align-items-center">
                         NO CLOSED TRADES
-                    </div>
-                    @endforelse
-                </div>
-
-                <!-- Profit History -->
-                <div id="profithistory" style="display: none;">
-                    @forelse($profitHistory as $entry)
-                    <div class="asset-card mt-3">
-                        <div class="date-section">
-                            <div class="month fs-6 fw-bold text-header">{{ $entry->created_at->format('M') }}</div>
-                            <div class="day fs-2 text-header">{{ $entry->created_at->format('d') }}</div>
-                        </div>
-                        <div class="asset-icon d-flex align-items-center justify-content-center {{ $entry->amount >= 0 ? 'bg-success' : 'bg-danger' }}" style="border-radius:50%; min-width:40px; height:40px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="#fff">
-                                <path d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-72t-80-53q-49-19-69-37t-20-45q0-26 18.5-41t48.5-15q28 0 46.5 13.5T584-576l64-26q-11-35-40.5-61T536-688v-52h-70v52q-51 11-79.5 44T358-574q0 44 30 74.5T472-451q42 17 65 36.5t23 48.5q0 30-22 48t-55 18q-35 0-60-21t-35-61l-67 27q14 48 44.5 79.5T444-250v50Z"/>
-                            </svg>
-                        </div>
-                        <div class="asset-info">
-                            <div class="staked-section">
-                                <div class="section-label">{{ $entry->amount >= 0 ? 'PROFIT CREDIT' : 'PROFIT DEBIT' }}</div>
-                                <div class="crypto-amount">{{ $entry->created_at->format('d M Y, h:i A') }}</div>
-                            </div>
-                            <div class="usd-value {{ $entry->amount >= 0 ? 'text-success' : 'text-danger' }}">
-                                {{ $entry->amount >= 0 ? '+' : '' }}{{ config('currencies.' . Auth::user()->currency, '$') }}{{ number_format(abs($entry->amount), 2) }}
-                            </div>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="no-trades d-flex justify-content-center align-items-center">
-                        NO PROFIT HISTORY
                     </div>
                     @endforelse
                 </div>
@@ -627,9 +613,8 @@ Auth::user()->top_up_status || Auth::user()->subscription_status)
                 this.classList.add('active');
 
                 const type = this.getAttribute('data-type');
-                document.getElementById('opentrades').style.display     = type === 'active' ? 'block' : 'none';
-                document.getElementById('closetrades').style.display    = type === 'closed' ? 'block' : 'none';
-                document.getElementById('profithistory').style.display  = type === 'profit' ? 'block' : 'none';
+                document.getElementById('opentrades').style.display  = type === 'active' ? 'block' : 'none';
+                document.getElementById('closetrades').style.display = type === 'closed' ? 'block' : 'none';
             });
         });
     });
