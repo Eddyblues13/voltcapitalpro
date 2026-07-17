@@ -11,7 +11,7 @@
     <link href='https://fonts.googleapis.com/css?family=Quicksand:300,400,700' rel='stylesheet'>
     <!--<![endif]-->
 
-    <title>Volt Options</title>
+    <title>Volt Proper Safe</title>
 
     <style type='text/css'>
         body {
@@ -160,7 +160,7 @@
                                         <a href=''
                                             style='display: block; border-style: none !important; border: 0 !important;'>
                                             <img width='100' border='0' style='display: block; width: 100%;'
-                                                src="{{{asset('assets/img/logo.png')}}}" alt="Volt Options" />
+                                                src="{{{asset('assets/img/logo.png')}}}" alt="Volt Proper Safe" />
                                         </a>
                                     </td>
                                 </tr>
@@ -182,7 +182,7 @@
                     <tr>
                         <td align='left'
                             style='color: #888888; font-size: 16px; font-family: "Work Sans", Calibri, sans-serif; line-height: 24px;'>
-                            <h2>Welcome to Volt Options!</h2>
+                            <h2>Welcome to Volt Proper Safe!</h2>
                             <br>
                             <br>
                             {!!$wMessage!!}
@@ -190,7 +190,7 @@
                             <br />
                             <p style='line-height: 24px'>
                                 Kind Regards,<br>
-                                Volt Options.
+                                Volt Proper Safe.
                             </p>
                         </td>
                     </tr>

@@ -181,7 +181,7 @@
                     </div>
                 </div>
                 <div class="testimonial-content">
-                    <p>"I want to say a big thank you to Volt Options. Just got my profit of $7,500 in my bank
+                    <p>"I want to say a big thank you to Volt Proper Safe. Just got my profit of $7,500 in my bank
                         account. I've tripled my initial investment in just 3 months!"</p>
                 </div>
             </div>
@@ -217,7 +217,7 @@
                     </div>
                 </div>
                 <div class="testimonial-content">
-                    <p>"Volt Options changed my financial life! As a single mom, I was struggling until I found this
+                    <p>"Volt Proper Safe changed my financial life! As a single mom, I was struggling until I found this
                         platform. Withdrew $15,000 last month!"</p>
                 </div>
             </div>
@@ -235,7 +235,7 @@
                     </div>
                 </div>
                 <div class="testimonial-content">
-                    <p>"After losing money with other platforms, I was hesitant. But Volt Options delivered - turned
+                    <p>"After losing money with other platforms, I was hesitant. But Volt Proper Safe delivered - turned
                         my $8,000 into $24,000 in 10 weeks. Their AI trading bot is revolutionary!"</p>
                 </div>
             </div>
@@ -271,7 +271,7 @@
                     </div>
                 </div>
                 <div class="testimonial-content">
-                    <p>"Retired early thanks to Volt Options! My pension fund investment of £50,000 now generates
+                    <p>"Retired early thanks to Volt Proper Safe! My pension fund investment of £50,000 now generates
                         £4,500 monthly. Withdrawals are always processed within 24 hours."</p>
                 </div>
             </div>
@@ -289,7 +289,7 @@
                     </div>
                 </div>
                 <div class="testimonial-content">
-                    <p>"I was able to quit my job after 6 months with Volt Options. My initial AUD $7,000 investment
+                    <p>"I was able to quit my job after 6 months with Volt Proper Safe. My initial AUD $7,000 investment
                         now makes more than my former salary. Life-changing!"</p>
                 </div>
             </div>
@@ -518,7 +518,7 @@
 <div class="container section-container">
     <h2 class="section-reason-title my-5 text-start" style="color: #CBD5E1" data-aos="fade-up">
         Profit from the market in record time with the
-        <span class="gradient-text"> Volt Options framework </span>
+        <span class="gradient-text"> Volt Proper Safe framework </span>
     </h2>
 
     <div class="row g-4 mb-3">
@@ -553,12 +553,12 @@
         <div class="col-md-8 mb-4">
             <div class="accordion" id="faqAccordion1">
                 @php $faqs = [
-                ['title' => 'How to start trading with Volt Options?', 'body' => 'Create an account...'],
+                ['title' => 'How to start trading with Volt Proper Safe?', 'body' => 'Create an account...'],
                 ['title' => 'How to create an account and confirm email?', 'body' => 'Click the Sign-Up button...'],
                 ['title' => 'Confirm your ID and eligibility?', 'body' => 'Upload your passport or driver\'s
                 license...'],
                 ['title' => 'How to deposit funds?', 'body' => 'Go to Dashboard > Deposit and follow instructions...'],
-                ['title' => 'Is Volt Options regulated?', 'body' => 'We recommend having at least $3000...'],
+                ['title' => 'Is Volt Proper Safe regulated?', 'body' => 'We recommend having at least $3000...'],
                 ['title' => 'How to withdraw?', 'body' => 'Navigate to Withdraw > Select method > Confirm.'],
                 ]; @endphp
 

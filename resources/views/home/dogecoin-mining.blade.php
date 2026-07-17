@@ -151,7 +151,7 @@
 
             <p class="dogecoin-mining-section-text">
                 You might find some cloud mining vendors offer a couple of months of free mining. However, always make
-                sure you are completely aware of all terms and conditions. <strong>Volt Options</strong> can
+                sure you are completely aware of all terms and conditions. <strong>Volt Proper Safe</strong> can
                 be a good
                 option here.
             </p>

@@ -1,6 +1,6 @@
 <footer class="footer mx-2">
   <div class="footer-content">
-    <div class="brand">Volt Options</div>
+    <div class="brand">Volt Proper Safe</div>
 
     <div class="row">
       <div class="col-6 col-md-4 mb-5">
@@ -27,7 +27,7 @@
     </div>
 
     <div class="footer-bottom">
-      <div class="copyright">Copyright © 2019 by Volt Options</div>
+      <div class="copyright">Copyright © 2019 by Volt Proper Safe</div>
     </div>
   </div>
   {{--

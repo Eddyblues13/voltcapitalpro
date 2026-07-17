@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volt Options</title>
+    <title>Volt Proper Safe</title>
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
     <meta name="bingbot" content="noindex, nofollow">
@@ -64,7 +64,7 @@ window.smartsupp||(function(d) {
                 data-bs-target="#sidebar" aria-controls="sidebarMenu">
                 <i class="bi bi-list"></i>
             </button>
-            <div class="mt-1"><a href="#" class="text-decoration-none text-white">Volt Options</a></div>
+            <div class="mt-1"><a href="#" class="text-decoration-none text-white">Volt Proper Safe</a></div>
         </div>
 
         <div>{{Auth::user()->first_name}}

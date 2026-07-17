@@ -52,11 +52,11 @@
                         <div class="text-center navbar-brand-wrapper d-flex align-items-center">
                             <a class="navbar-brand brand-logo" href="{{ route('admin.home') }}">
                                 <img src="{{ asset('assets/img/logo.png') }}" alt="logo">
-                                voltoptions
+                                Volt Proper Safe
                             </a>
                             <a class="navbar-brand brand-logo-mini1" href="{{ route('admin.home') }}">
                                 <img src="{{ asset('assets/img/logo.png') }}" alt="logo">
-                                voltoptions
+                                Volt Proper Safe
                             </a>
                         </div>
                         <div class="navbar-menu-wrapper d-flex align-items-stretch justify-content-between flex-grow-1">

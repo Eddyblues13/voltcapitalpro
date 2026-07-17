@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volt Options</title>
+    <title>Volt Proper Safe</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -66,10 +66,10 @@
             <p>Dear User,</p>
             <p>{!! nl2br(e($messageBody)) !!}</p>
             <p>Best Regards,</p>
-            <p><strong>Volt Options</strong></p>
+            <p><strong>Volt Proper Safe</strong></p>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} Volt Options. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} Volt Proper Safe. All rights reserved.</p>
         </div>
     </div>
 </body>

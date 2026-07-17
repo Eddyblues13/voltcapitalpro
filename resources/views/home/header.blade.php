@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volt Options - Learn to Invest</title>
+    <title>Volt Proper Safe - Learn to Invest</title>
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
     <meta name="bingbot" content="noindex, nofollow">
@@ -48,7 +48,7 @@ window.smartsupp||(function(d) {
         <div class="container">
             <a class="navbar-brand" href="/">
                 <div class="brand-icon"><img src="assets/img/android-chrome-36x36.png" alt=""></div>
-                Volt Options
+                Volt Proper Safe
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar"
                 aria-controls="sidebarMenu">

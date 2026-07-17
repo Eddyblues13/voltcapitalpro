@@ -11,7 +11,7 @@
     <link href='https://fonts.googleapis.com/css?family=Quicksand:300,400,700' rel='stylesheet'>
     <!--<![endif]-->
 
-    <title>Volt Options</title>
+    <title>Volt Proper Safe</title>
 
     <style type='text/css'>
         body {
@@ -161,7 +161,7 @@
                                             style='display: block; border-style: none !important; border: 0 !important;'>
                                             <img width="10" height="10" border="0"
                                                 style="display: block; width: 10px; height: 10px;"
-                                                src="{{ asset('assets/img/logo.png') }}" alt="Volt Options" />
+                                                src="{{ asset('assets/img/logo.png') }}" alt="Volt Proper Safe" />
 
                                         </a>
                                     </td>
@@ -194,7 +194,7 @@
                                 <li>Date: {{ $date }}</li>
                             </ul>
                             <p>Thank you for using our service!</p>
-                            <p>Kind Regards,<br>Volt Options.</p>
+                            <p>Kind Regards,<br>Volt Proper Safe.</p>
                         </td>
                     </tr>
                 </table>
